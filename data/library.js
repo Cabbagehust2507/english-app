@@ -1,0 +1,293 @@
+/* =========================================================
+   data/library.js – KHO HỌC LIỆU: các bộ có sẵn để chọn thêm vào học
+   (nội dung do Claude soạn, giống bộ "Mẫu")
+
+   LIBRARY.paths – các lộ trình, mỗi lộ trình 3 chặng.
+     Mỗi chặng có "groups": danh sách nhóm bộ. Bấm "Học tiếp" sẽ thêm từng nhóm một
+     (nhóm sau chỉ thêm khi nhóm trước đã nhớ được 80%), để không bị quá nhiều thẻ một lúc.
+     soon: true = lộ trình sắp có, chỉ hiện tên.
+   LIBRARY.sets – các bộ:
+     kind 'p' = cụm từ, mỗi mục: [cụm từ, nghĩa, dùng khi, câu ví dụ]
+     kind 'l' = câu nghe, mỗi mục: [câu tiếng Anh, nghĩa tiếng Việt]
+     name = tên bộ khi thêm vào học (hiện ở ô chọn bộ của tab Cụm từ / Luyện nghe)
+   ========================================================= */
+const LIBRARY = {
+  paths: [
+    {
+      id: 'ielts67',
+      icon: '🎯',
+      name: 'IELTS Band 6 → 7',
+      desc: 'Cụm từ hay dùng trong Writing Task 2 và Speaking, kèm câu nghe dùng chính các cụm đó.',
+      stages: [
+        { name: 'Giáo dục', groups: [['ielts-edu', 'ielts-edu-l']] },
+        { name: 'Môi trường', groups: [['ielts-env', 'ielts-env-l']] },
+        { name: 'Công việc & Công nghệ', groups: [['ielts-work', 'ielts-work-l']] },
+      ],
+    },
+    {
+      id: 'office',
+      icon: '💼',
+      name: 'Tiếng Anh công sở',
+      desc: 'Mẫu câu dùng hằng ngày ở văn phòng: làm quen, họp, viết email, thuyết trình.',
+      stages: [
+        { name: 'Làm quen & trò chuyện', groups: [['office-chat', 'office-chat-l']] },
+        { name: 'Họp & viết email', groups: [['office-meet', 'office-meet-l']] },
+        { name: 'Thuyết trình & xử lý vấn đề', groups: [['office-present', 'office-present-l']] },
+      ],
+    },
+  ],
+
+  sets: [
+    /* ---------- IELTS · Chặng 1: Giáo dục ---------- */
+    {
+      id: 'ielts-edu', kind: 'p', icon: '🎓', name: 'IELTS · Giáo dục', level: 'Band 6',
+      items: [
+        ['compulsory education', 'giáo dục bắt buộc', 'Nói về chính sách giáo dục của nhà nước', 'In many countries, compulsory education lasts until the age of sixteen.'],
+        ['academic performance', 'kết quả học tập', 'Nói về điểm số, thành tích ở trường', 'Regular sleep can improve students\' academic performance.'],
+        ['acquire knowledge', 'tiếp thu kiến thức', 'Văn viết, trang trọng hơn "learn"', 'Students acquire knowledge more effectively through practical tasks.'],
+        ['broaden one\'s horizons', 'mở mang tầm mắt', 'Lợi ích của du học, đọc sách, trải nghiệm', 'Studying abroad can broaden students\' horizons.'],
+        ['rote learning', 'học vẹt', 'Phê phán cách học thuộc lòng mà không hiểu', 'Rote learning does not encourage critical thinking.'],
+        ['critical thinking skills', 'kỹ năng tư duy phản biện', 'Mục tiêu của giáo dục hiện đại', 'Debates help children develop critical thinking skills.'],
+        ['tuition fees', 'học phí', 'Nói về chi phí học đại học', 'Rising tuition fees prevent many young people from going to university.'],
+        ['higher education', 'giáo dục bậc cao (đại học, sau đại học)', 'Văn viết, thay cho "university"', 'Higher education should be accessible to everyone.'],
+        ['vocational training', 'đào tạo nghề', 'Đối lập với học đại học hàn lâm', 'Vocational training prepares students for specific jobs.'],
+        ['lifelong learning', 'học tập suốt đời', 'Tiếp tục học sau khi đã đi làm', 'Lifelong learning is essential in a fast-changing world.'],
+        ['a well-rounded education', 'nền giáo dục toàn diện', 'Học cả kiến thức, thể thao, nghệ thuật', 'Schools should offer a well-rounded education, not just exam preparation.'],
+        ['extracurricular activities', 'hoạt động ngoại khóa', 'Câu lạc bộ, thể thao ngoài giờ học', 'Extracurricular activities help students build teamwork skills.'],
+        ['drop out of school', 'bỏ học', 'Học sinh nghỉ học giữa chừng', 'Some teenagers drop out of school to support their families.'],
+        ['a heavy workload', 'khối lượng bài vở / công việc nặng', 'Nói về áp lực học tập, làm việc', 'Many students suffer from stress because of a heavy workload.'],
+        ['distance learning', 'học từ xa', 'Học online, không cần đến lớp', 'Distance learning allows adults to study while working.'],
+        ['gain a qualification', 'lấy được bằng cấp, chứng chỉ', 'Văn viết, trang trọng', 'She went back to college to gain a teaching qualification.'],
+        ['bridge the gap', 'thu hẹp khoảng cách', 'Giữa giàu và nghèo, lý thuyết và thực tế', 'Free online courses can bridge the gap between rich and poor students.'],
+        ['hands-on experience', 'kinh nghiệm thực tế', 'Học qua làm thật, thực hành', 'Internships give students valuable hands-on experience.'],
+        ['place too much emphasis on', 'quá chú trọng vào', 'Phê phán, nêu quan điểm trong bài viết', 'Schools place too much emphasis on exam results.'],
+        ['equip students with', 'trang bị cho học sinh', 'Nói về mục đích của giáo dục', 'Schools should equip students with practical life skills.'],
+      ],
+    },
+    {
+      id: 'ielts-edu-l', kind: 'l', icon: '🎓', name: 'IELTS · Giáo dục (nghe)', level: 'Band 6',
+      items: [
+        ['Rote learning does not encourage critical thinking.', 'Học vẹt không khuyến khích tư duy phản biện.'],
+        ['Studying abroad can broaden your horizons.', 'Du học có thể giúp bạn mở mang tầm mắt.'],
+        ['Rising tuition fees prevent many young people from going to university.', 'Học phí tăng khiến nhiều người trẻ không thể học đại học.'],
+        ['Vocational training prepares students for specific jobs.', 'Đào tạo nghề chuẩn bị cho học viên những công việc cụ thể.'],
+        ['Lifelong learning is essential in a fast-changing world.', 'Học tập suốt đời là điều cần thiết trong một thế giới thay đổi nhanh.'],
+        ['Extracurricular activities help students build teamwork skills.', 'Hoạt động ngoại khóa giúp học sinh rèn kỹ năng làm việc nhóm.'],
+        ['Many students suffer from stress because of a heavy workload.', 'Nhiều học sinh bị căng thẳng vì khối lượng bài vở nặng.'],
+        ['Internships give students valuable hands-on experience.', 'Thực tập mang lại cho sinh viên kinh nghiệm thực tế quý giá.'],
+        ['In my opinion, schools place too much emphasis on exam results.', 'Theo tôi, các trường quá chú trọng vào kết quả thi.'],
+        ['Distance learning allows adults to study while working.', 'Học từ xa cho phép người lớn vừa học vừa làm.'],
+      ],
+    },
+
+    /* ---------- IELTS · Chặng 2: Môi trường ---------- */
+    {
+      id: 'ielts-env', kind: 'p', icon: '🌿', name: 'IELTS · Môi trường', level: 'Band 6',
+      items: [
+        ['tackle climate change', 'giải quyết biến đổi khí hậu', 'Văn viết, khi đề xuất giải pháp', 'Governments must work together to tackle climate change.'],
+        ['carbon emissions', 'lượng khí thải carbon', 'Nguyên nhân của nóng lên toàn cầu', 'Cars are a major source of carbon emissions.'],
+        ['renewable energy', 'năng lượng tái tạo', 'Năng lượng gió, mặt trời, nước', 'Investing in renewable energy reduces our dependence on oil.'],
+        ['fossil fuels', 'nhiên liệu hóa thạch', 'Than, dầu mỏ, khí đốt', 'Burning fossil fuels releases harmful gases.'],
+        ['global warming', 'sự nóng lên toàn cầu', 'Hậu quả của khí thải nhà kính', 'Global warming is causing sea levels to rise.'],
+        ['carbon footprint', 'lượng khí thải carbon mỗi người tạo ra', 'Nói về hành động của cá nhân', 'Taking the train instead of flying reduces your carbon footprint.'],
+        ['endangered species', 'loài có nguy cơ tuyệt chủng', 'Chủ đề bảo tồn động vật', 'Poaching threatens many endangered species.'],
+        ['deforestation', 'nạn phá rừng', 'Nguyên nhân mất môi trường sống', 'Deforestation destroys the habitats of countless animals.'],
+        ['natural habitats', 'môi trường sống tự nhiên', 'Nơi động vật hoang dã sinh sống', 'Urban expansion is destroying natural habitats.'],
+        ['raise awareness of', 'nâng cao nhận thức về', 'Giải pháp bằng giáo dục, truyền thông', 'Campaigns can raise awareness of plastic pollution.'],
+        ['single-use plastics', 'đồ nhựa dùng một lần', 'Ống hút, túi nilon, chai nhựa', 'Many cities have banned single-use plastics.'],
+        ['impose strict regulations', 'áp đặt quy định nghiêm ngặt', 'Giải pháp từ phía chính phủ', 'The government should impose strict regulations on factories.'],
+        ['pose a threat to', 'gây ra mối đe dọa cho', 'Văn viết, trang trọng', 'Air pollution poses a serious threat to public health.'],
+        ['sustainable development', 'phát triển bền vững', 'Phát triển mà không gây hại cho tương lai', 'Sustainable development balances economic growth and environmental protection.'],
+        ['reduce waste', 'giảm rác thải', 'Hành động của cá nhân, cộng đồng', 'Recycling and reusing products help reduce waste.'],
+        ['extreme weather events', 'các hiện tượng thời tiết cực đoan', 'Bão, lũ lụt, hạn hán', 'Extreme weather events are becoming more frequent.'],
+        ['public transport', 'giao thông công cộng', 'Giải pháp giảm kẹt xe, khí thải', 'Improving public transport would reduce traffic and pollution.'],
+        ['take responsibility for', 'chịu trách nhiệm về', 'Nêu ai cần phải hành động', 'Individuals should take responsibility for their own waste.'],
+        ['irreversible damage', 'thiệt hại không thể đảo ngược', 'Nhấn mạnh hậu quả nghiêm trọng', 'Overfishing may cause irreversible damage to marine life.'],
+        ['go green', 'sống xanh, chuyển sang thân thiện với môi trường', 'Văn nói, thân mật', 'More companies are going green to attract young customers.'],
+      ],
+    },
+    {
+      id: 'ielts-env-l', kind: 'l', icon: '🌿', name: 'IELTS · Môi trường (nghe)', level: 'Band 6',
+      items: [
+        ['Governments must work together to tackle climate change.', 'Các chính phủ phải hợp tác để giải quyết biến đổi khí hậu.'],
+        ['Burning fossil fuels releases harmful gases into the air.', 'Đốt nhiên liệu hóa thạch thải khí độc vào không khí.'],
+        ['Taking the train instead of flying reduces your carbon footprint.', 'Đi tàu thay vì đi máy bay giúp giảm lượng khí thải carbon của bạn.'],
+        ['Deforestation destroys the habitats of countless animals.', 'Nạn phá rừng phá hủy môi trường sống của vô số loài động vật.'],
+        ['Many cities have banned single-use plastics.', 'Nhiều thành phố đã cấm đồ nhựa dùng một lần.'],
+        ['Air pollution poses a serious threat to public health.', 'Ô nhiễm không khí gây ra mối đe dọa nghiêm trọng cho sức khỏe cộng đồng.'],
+        ['Extreme weather events are becoming more frequent.', 'Các hiện tượng thời tiết cực đoan ngày càng xảy ra thường xuyên hơn.'],
+        ['Improving public transport would reduce traffic and pollution.', 'Cải thiện giao thông công cộng sẽ giảm kẹt xe và ô nhiễm.'],
+        ['Investing in renewable energy reduces our dependence on oil.', 'Đầu tư vào năng lượng tái tạo giúp giảm sự phụ thuộc vào dầu mỏ.'],
+        ['Campaigns can raise awareness of plastic pollution.', 'Các chiến dịch có thể nâng cao nhận thức về ô nhiễm nhựa.'],
+      ],
+    },
+
+    /* ---------- IELTS · Chặng 3: Công việc & Công nghệ ---------- */
+    {
+      id: 'ielts-work', kind: 'p', icon: '💻', name: 'IELTS · Công việc & Công nghệ', level: 'Band 6.5',
+      items: [
+        ['job satisfaction', 'sự hài lòng trong công việc', 'Nói về động lực làm việc', 'For many people, job satisfaction matters more than salary.'],
+        ['work-life balance', 'cân bằng công việc và cuộc sống', 'Chủ đề rất hay gặp trong IELTS', 'Remote work can improve work-life balance.'],
+        ['climb the career ladder', 'thăng tiến trong sự nghiệp', 'Dùng cả văn nói lẫn văn viết', 'She worked hard to climb the career ladder.'],
+        ['job security', 'sự ổn định công việc', 'Không lo bị mất việc', 'Government jobs usually offer greater job security.'],
+        ['a competitive salary', 'mức lương cạnh tranh', 'Tin tuyển dụng, nói về đãi ngộ', 'The company attracts talent by offering a competitive salary.'],
+        ['work remotely', 'làm việc từ xa', 'Làm ở nhà, làm online', 'More employees now prefer to work remotely.'],
+        ['unemployment rate', 'tỷ lệ thất nghiệp', 'Số liệu kinh tế, hay gặp trong Task 1', 'The unemployment rate fell to three percent last year.'],
+        ['be replaced by machines', 'bị máy móc thay thế', 'Tự động hóa, trí tuệ nhân tạo', 'Many factory jobs may be replaced by machines.'],
+        ['artificial intelligence', 'trí tuệ nhân tạo (AI)', 'Chủ đề công nghệ', 'Artificial intelligence is changing the way we work.'],
+        ['technological advances', 'những tiến bộ công nghệ', 'Văn viết, trang trọng', 'Technological advances have made communication faster and cheaper.'],
+        ['be addicted to', 'nghiện', 'Mạng xã hội, điện thoại, trò chơi', 'Many teenagers are addicted to their smartphones.'],
+        ['social media platforms', 'các nền tảng mạng xã hội', 'Facebook, TikTok, Instagram…', 'Social media platforms spread news very quickly.'],
+        ['invasion of privacy', 'sự xâm phạm quyền riêng tư', 'Mặt trái của công nghệ', 'Collecting personal data without consent is an invasion of privacy.'],
+        ['digital literacy', 'kỹ năng sử dụng công nghệ số', 'Kỹ năng mọi người cần có hiện nay', 'Older workers may need training in digital literacy.'],
+        ['keep up with', 'theo kịp', 'Xu hướng, công nghệ mới', 'It is hard to keep up with the latest technology.'],
+        ['a double-edged sword', 'con dao hai lưỡi', 'Khi nêu cả mặt tốt và mặt xấu', 'The internet is a double-edged sword.'],
+        ['boost productivity', 'tăng năng suất', 'Lợi ích của công nghệ, cách làm việc', 'Automation can boost productivity in factories.'],
+        ['face-to-face interaction', 'giao tiếp trực tiếp', 'Đối lập với giao tiếp qua mạng', 'Technology has reduced face-to-face interaction.'],
+        ['gain work experience', 'tích lũy kinh nghiệm làm việc', 'Sinh viên, người mới đi làm', 'Part-time jobs help students gain work experience.'],
+        ['a nine-to-five job', 'công việc giờ hành chính', 'Văn nói', 'He quit his nine-to-five job to start his own business.'],
+      ],
+    },
+    {
+      id: 'ielts-work-l', kind: 'l', icon: '💻', name: 'IELTS · Công việc & Công nghệ (nghe)', level: 'Band 6.5',
+      items: [
+        ['For many people, job satisfaction matters more than salary.', 'Với nhiều người, sự hài lòng trong công việc quan trọng hơn tiền lương.'],
+        ['Remote work can improve work-life balance.', 'Làm việc từ xa có thể cải thiện sự cân bằng giữa công việc và cuộc sống.'],
+        ['Government jobs usually offer greater job security.', 'Công việc nhà nước thường ổn định hơn.'],
+        ['Many factory jobs may be replaced by machines.', 'Nhiều công việc trong nhà máy có thể bị máy móc thay thế.'],
+        ['Artificial intelligence is changing the way we work.', 'Trí tuệ nhân tạo đang thay đổi cách chúng ta làm việc.'],
+        ['Many teenagers are addicted to their smartphones.', 'Nhiều thanh thiếu niên nghiện điện thoại thông minh.'],
+        ['The internet is a double-edged sword.', 'Internet là con dao hai lưỡi.'],
+        ['It is hard to keep up with the latest technology.', 'Thật khó để theo kịp công nghệ mới nhất.'],
+        ['Technology has reduced face-to-face interaction.', 'Công nghệ đã làm giảm giao tiếp trực tiếp.'],
+        ['He quit his nine-to-five job to start his own business.', 'Anh ấy bỏ công việc giờ hành chính để tự kinh doanh.'],
+      ],
+    },
+
+    /* ---------- Công sở · Chặng 1: Làm quen & trò chuyện ---------- */
+    {
+      id: 'office-chat', kind: 'p', icon: '👋', name: 'Công sở · Làm quen & trò chuyện', level: 'Dễ',
+      items: [
+        ['Nice to meet you.', 'Rất vui được gặp bạn.', 'Lần đầu gặp đồng nghiệp, đối tác', 'Hi, I\'m Lan from Marketing. Nice to meet you.'],
+        ['I work in the … department.', 'Tôi làm ở phòng …', 'Giới thiệu bộ phận của mình', 'I work in the finance department.'],
+        ['I\'m in charge of …', 'Tôi phụ trách …', 'Giới thiệu nhiệm vụ của mình', 'I\'m in charge of social media campaigns.'],
+        ['How long have you been with the company?', 'Bạn làm ở công ty bao lâu rồi?', 'Bắt chuyện với đồng nghiệp', 'How long have you been with the company? About two years now.'],
+        ['Let me introduce you to …', 'Để tôi giới thiệu bạn với …', 'Giới thiệu người khác', 'Let me introduce you to our team leader, Minh.'],
+        ['How\'s your day going?', 'Hôm nay của bạn thế nào?', 'Hỏi thăm xã giao', 'Hey, how\'s your day going? Pretty busy, but good.'],
+        ['Have a good weekend!', 'Cuối tuần vui vẻ nhé!', 'Chào nhau chiều thứ Sáu', 'See you on Monday. Have a good weekend!'],
+        ['grab a coffee', 'đi uống cà phê (nhanh)', 'Rủ đồng nghiệp, thân mật', 'Do you want to grab a coffee after lunch?'],
+        ['catch up', 'hàn huyên, cập nhật tình hình của nhau', 'Gặp lại sau một thời gian', 'We should catch up sometime next week.'],
+        ['Do you have a minute?', 'Bạn rảnh một chút không?', 'Lịch sự trước khi nhờ hoặc hỏi', 'Do you have a minute? I\'d like to ask you about the report.'],
+        ['give someone a hand', 'giúp ai một tay', 'Nhờ giúp hoặc đề nghị giúp', 'Could you give me a hand with these boxes?'],
+        ['I\'m swamped.', 'Tôi đang ngập đầu công việc.', 'Văn nói, khi quá bận', 'Sorry, I\'m swamped today. Can we talk tomorrow?'],
+        ['work overtime', 'làm thêm giờ', 'Nói về giờ làm việc', 'We had to work overtime to finish the project.'],
+        ['take a day off', 'nghỉ một ngày', 'Xin nghỉ phép', 'I\'d like to take a day off next Friday.'],
+        ['colleague', 'đồng nghiệp', 'Danh từ, trang trọng hơn "co-worker"', 'My colleagues are very supportive.'],
+        ['new starter', 'nhân viên mới', 'Anh-Anh; Anh-Mỹ hay nói "new hire"', 'We have two new starters joining the team this week.'],
+        ['Welcome aboard!', 'Chào mừng bạn gia nhập!', 'Chào đón nhân viên mới', 'Welcome aboard! Let me show you around the office.'],
+        ['show someone around', 'dẫn ai đi tham quan, giới thiệu nơi làm việc', 'Ngày đầu đi làm', 'Our manager showed me around on my first day.'],
+        ['get along with', 'hòa hợp với', 'Nói về quan hệ đồng nghiệp', 'I get along well with everyone on my team.'],
+        ['Thanks for your help.', 'Cảm ơn bạn đã giúp.', 'Cảm ơn đồng nghiệp', 'Thanks for your help with the presentation.'],
+      ],
+    },
+    {
+      id: 'office-chat-l', kind: 'l', icon: '👋', name: 'Công sở · Làm quen & trò chuyện (nghe)', level: 'Dễ',
+      items: [
+        ['Hi, I\'m Lan from Marketing. Nice to meet you.', 'Chào bạn, mình là Lan ở phòng Marketing. Rất vui được gặp bạn.'],
+        ['I\'m in charge of social media campaigns.', 'Tôi phụ trách các chiến dịch mạng xã hội.'],
+        ['How long have you been with the company?', 'Bạn làm ở công ty bao lâu rồi?'],
+        ['Let me introduce you to our team leader.', 'Để tôi giới thiệu bạn với trưởng nhóm của chúng ta.'],
+        ['Do you want to grab a coffee after lunch?', 'Ăn trưa xong bạn có muốn đi uống cà phê không?'],
+        ['Do you have a minute? I\'d like to ask you something.', 'Bạn rảnh một chút không? Tôi muốn hỏi bạn một chuyện.'],
+        ['Sorry, I\'m swamped today. Can we talk tomorrow?', 'Xin lỗi, hôm nay tôi ngập việc. Mai mình nói chuyện được không?'],
+        ['I\'d like to take a day off next Friday.', 'Tôi muốn xin nghỉ thứ Sáu tuần sau.'],
+        ['Welcome aboard! Let me show you around the office.', 'Chào mừng bạn gia nhập! Để tôi dẫn bạn đi xem văn phòng.'],
+        ['See you on Monday. Have a good weekend!', 'Hẹn gặp lại thứ Hai. Cuối tuần vui vẻ nhé!'],
+      ],
+    },
+
+    /* ---------- Công sở · Chặng 2: Họp & viết email ---------- */
+    {
+      id: 'office-meet', kind: 'p', icon: '📧', name: 'Công sở · Họp & viết email', level: 'Trung bình',
+      items: [
+        ['Let\'s get started.', 'Chúng ta bắt đầu nhé.', 'Mở đầu cuộc họp', 'OK, everyone is here. Let\'s get started.'],
+        ['The purpose of this meeting is to …', 'Mục đích của cuộc họp này là …', 'Nêu mục tiêu cuộc họp', 'The purpose of this meeting is to plan the product launch.'],
+        ['on the agenda', 'trong chương trình họp', 'Nói về các mục cần bàn', 'There are three items on the agenda today.'],
+        ['Could you elaborate on that?', 'Bạn nói rõ hơn được không?', 'Đề nghị giải thích thêm, lịch sự', 'Could you elaborate on that? I\'m not sure I follow.'],
+        ['I see your point, but …', 'Tôi hiểu ý bạn, nhưng …', 'Phản đối một cách nhẹ nhàng', 'I see your point, but the budget is limited.'],
+        ['Let\'s move on to the next item.', 'Chúng ta chuyển sang mục tiếp theo.', 'Điều phối cuộc họp', 'Thanks, Nam. Let\'s move on to the next item.'],
+        ['to sum up', 'tóm lại', 'Tổng kết cuộc họp, bài nói', 'To sum up, we will launch the product in May.'],
+        ['action points', 'các việc cần làm sau cuộc họp', 'Ghi rõ ai làm việc gì', 'I\'ll send the action points after the meeting.'],
+        ['follow up on', 'theo dõi tiếp, làm tiếp (việc gì)', 'Sau cuộc họp, sau email', 'I\'ll follow up on this with the IT team.'],
+        ['I\'m writing to …', 'Tôi viết thư này để …', 'Câu mở đầu email trang trọng', 'I\'m writing to confirm our meeting on Thursday.'],
+        ['Please find attached …', 'Vui lòng xem … trong tệp đính kèm', 'Gửi tài liệu qua email', 'Please find attached the latest sales report.'],
+        ['as discussed', 'như đã trao đổi', 'Nhắc lại nội dung đã bàn', 'As discussed, the deadline has been moved to Friday.'],
+        ['Could you please confirm …?', 'Bạn vui lòng xác nhận … được không?', 'Yêu cầu lịch sự trong email', 'Could you please confirm the delivery date?'],
+        ['I look forward to hearing from you.', 'Tôi mong nhận được phản hồi của bạn.', 'Câu kết email trang trọng', 'Thank you for your time. I look forward to hearing from you.'],
+        ['Sorry for the late reply.', 'Xin lỗi vì trả lời muộn.', 'Mở đầu email khi trả lời trễ', 'Sorry for the late reply. I was out of the office yesterday.'],
+        ['reschedule the meeting', 'dời lịch họp', 'Đổi giờ hoặc đổi ngày họp', 'Can we reschedule the meeting to next Monday?'],
+        ['cc someone', 'đồng gửi (cc) email cho ai', 'Thêm người vào email', 'Please cc your manager on this email.'],
+        ['a quick reminder', 'lời nhắc nhanh', 'Email nhắc việc nhẹ nhàng', 'Just a quick reminder that the report is due tomorrow.'],
+        ['touch base', 'liên lạc, trao đổi ngắn', 'Văn nói công sở', 'Let\'s touch base after the client call.'],
+        ['Kind regards', 'Trân trọng', 'Lời chào cuối email, trang trọng vừa phải', 'Kind regards, Lan Nguyen'],
+      ],
+    },
+    {
+      id: 'office-meet-l', kind: 'l', icon: '📧', name: 'Công sở · Họp & viết email (nghe)', level: 'Trung bình',
+      items: [
+        ['OK, everyone is here. Let\'s get started.', 'Được rồi, mọi người đến đủ rồi. Chúng ta bắt đầu nhé.'],
+        ['There are three items on the agenda today.', 'Hôm nay có ba mục trong chương trình họp.'],
+        ['I see your point, but the budget is limited.', 'Tôi hiểu ý bạn, nhưng ngân sách có hạn.'],
+        ['Let\'s move on to the next item.', 'Chúng ta chuyển sang mục tiếp theo.'],
+        ['To sum up, we will launch the product in May.', 'Tóm lại, chúng ta sẽ ra mắt sản phẩm vào tháng Năm.'],
+        ['I\'ll send the action points after the meeting.', 'Tôi sẽ gửi danh sách việc cần làm sau cuộc họp.'],
+        ['I\'m writing to confirm our meeting on Thursday.', 'Tôi viết thư này để xác nhận cuộc họp của chúng ta vào thứ Năm.'],
+        ['Please find attached the latest sales report.', 'Vui lòng xem báo cáo bán hàng mới nhất trong tệp đính kèm.'],
+        ['Can we reschedule the meeting to next Monday?', 'Chúng ta dời cuộc họp sang thứ Hai tuần sau được không?'],
+        ['Just a quick reminder that the report is due tomorrow.', 'Nhắc nhanh là báo cáo phải nộp vào ngày mai.'],
+      ],
+    },
+
+    /* ---------- Công sở · Chặng 3: Thuyết trình & xử lý vấn đề ---------- */
+    {
+      id: 'office-present', kind: 'p', icon: '📊', name: 'Công sở · Thuyết trình & xử lý vấn đề', level: 'Trung bình',
+      items: [
+        ['Today I\'d like to talk about …', 'Hôm nay tôi muốn nói về …', 'Mở đầu bài thuyết trình', 'Today I\'d like to talk about our results for the first quarter.'],
+        ['Let\'s take a look at …', 'Chúng ta cùng xem …', 'Chuyển sang slide, biểu đồ', 'Let\'s take a look at the sales figures.'],
+        ['As you can see from this chart, …', 'Như các bạn thấy trên biểu đồ này, …', 'Giải thích số liệu', 'As you can see from this chart, sales rose by fifteen percent.'],
+        ['That brings me to …', 'Điều đó dẫn tôi đến …', 'Chuyển ý trong bài nói', 'That brings me to my next point: customer feedback.'],
+        ['Does anyone have any questions?', 'Có ai có câu hỏi gì không?', 'Cuối bài thuyết trình', 'That\'s all from me. Does anyone have any questions?'],
+        ['That\'s a good question.', 'Đó là một câu hỏi hay.', 'Mua thêm thời gian để nghĩ câu trả lời', 'That\'s a good question. Let me check and get back to you.'],
+        ['get back to someone', 'phản hồi lại ai sau', 'Khi chưa trả lời ngay được', 'I\'ll get back to you by the end of the day.'],
+        ['on track', 'đúng tiến độ', 'Báo cáo tiến độ dự án', 'The project is on track to finish in June.'],
+        ['behind schedule', 'chậm tiến độ', 'Báo cáo khi bị trễ', 'We are two weeks behind schedule.'],
+        ['meet the deadline', 'kịp hạn chót', 'Hoàn thành đúng hạn', 'We worked late to meet the deadline.'],
+        ['run into a problem', 'gặp phải vấn đề', 'Báo cáo khó khăn', 'We ran into a problem with the new software.'],
+        ['come up with a solution', 'nghĩ ra giải pháp', 'Họp để xử lý vấn đề', 'We need to come up with a solution quickly.'],
+        ['I\'m afraid …', 'Tôi e rằng …', 'Báo tin xấu một cách lịch sự', 'I\'m afraid the shipment will be late.'],
+        ['I apologise for the inconvenience.', 'Tôi xin lỗi vì sự bất tiện này.', 'Xin lỗi khách hàng, đối tác', 'I apologise for the inconvenience. We will fix it today.'],
+        ['sort out', 'giải quyết, thu xếp', 'Văn nói', 'Don\'t worry, I\'ll sort it out.'],
+        ['keep someone posted', 'cập nhật tình hình cho ai', 'Hứa sẽ báo tin tiếp', 'Please keep me posted on any changes.'],
+        ['a tight deadline', 'hạn chót gấp', 'Khi có rất ít thời gian', 'We\'re working to a tight deadline this month.'],
+        ['prioritise tasks', 'sắp xếp thứ tự ưu tiên công việc', 'Quản lý thời gian', 'When you\'re busy, you need to prioritise tasks.'],
+        ['give feedback', 'nhận xét, góp ý', 'Đánh giá công việc của ai', 'Could you give me some feedback on my presentation?'],
+        ['Thank you for your attention.', 'Cảm ơn mọi người đã lắng nghe.', 'Kết thúc bài thuyết trình', 'That\'s the end of my presentation. Thank you for your attention.'],
+      ],
+    },
+    {
+      id: 'office-present-l', kind: 'l', icon: '📊', name: 'Công sở · Thuyết trình & xử lý vấn đề (nghe)', level: 'Trung bình',
+      items: [
+        ['Today I\'d like to talk about our results for the first quarter.', 'Hôm nay tôi muốn nói về kết quả quý một của chúng ta.'],
+        ['As you can see from this chart, sales rose by fifteen percent.', 'Như các bạn thấy trên biểu đồ này, doanh số tăng mười lăm phần trăm.'],
+        ['That\'s a good question. Let me check and get back to you.', 'Câu hỏi hay đấy. Để tôi kiểm tra rồi phản hồi lại bạn.'],
+        ['The project is on track to finish in June.', 'Dự án đang đúng tiến độ để hoàn thành vào tháng Sáu.'],
+        ['We are two weeks behind schedule.', 'Chúng ta đang chậm tiến độ hai tuần.'],
+        ['We ran into a problem with the new software.', 'Chúng tôi gặp vấn đề với phần mềm mới.'],
+        ['I\'m afraid the shipment will be late.', 'Tôi e rằng lô hàng sẽ đến trễ.'],
+        ['Don\'t worry, I\'ll sort it out.', 'Đừng lo, tôi sẽ giải quyết.'],
+        ['Please keep me posted on any changes.', 'Có thay đổi gì thì cập nhật cho tôi nhé.'],
+        ['That\'s the end of my presentation. Thank you for your attention.', 'Bài thuyết trình của tôi đến đây là hết. Cảm ơn mọi người đã lắng nghe.'],
+      ],
+    },
+  ],
+};

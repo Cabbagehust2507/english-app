@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Học tiếng Anh mỗi ngày</title>
+  <!-- Font Be Vietnam Pro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ============ ĐẦU TRANG: tên, chuỗi ngày, nút Sáng/Tối, các tab ============ -->
+<header>
+  <div class="top">
+    <h1>Học tiếng Anh mỗi ngày</h1>
+    <div class="tools">
+      <!-- Chuỗi ngày học: bấm để về Trang chủ -->
+      <a class="streak" id="streak" href="#trang-chu">🔥 0 ngày</a>
+      <button class="themebtn" id="theme" type="button"></button>
+      <!-- Tài khoản: "Đăng nhập" hoặc tên người dùng (xem account.js) -->
+      <button class="themebtn userbtn" id="userbtn" type="button"></button>
+      <!-- Trạng thái đồng bộ: ☁️ đã đồng bộ · 🔄 đang đồng bộ · 📴 ngoại tuyến · ⚠️ lỗi (xem sync.js) -->
+      <span class="syncbadge" id="syncbadge" hidden></span>
+    </div>
+  </div>
+  <nav aria-label="Chọn phần học">
+    <a href="#trang-chu">Trang chủ</a>
+    <a href="#cum-tu">Cụm từ</a>
+    <a href="#luyen-nghe">Luyện nghe</a>
+    <a href="#nhap-du-lieu">Nhập dữ liệu</a>
+    <a href="#ielts">IELTS</a> <!-- đang ẩn, xem SHOW_IELTS trong app.js -->
+  </nav>
+</header>
+
+<main>
+
+  <!-- ============ TAB 0: TRANG CHỦ ============ -->
+  <section id="trang-chu">
+    <div class="hello">
+      <h2 id="hHello">Chào bạn! 👋</h2>
+      <p class="sub tight" id="hDate"></p>
+      <p class="hello-line" id="hLine"></p>
+    </div>
+
+    <div class="home-top">
+      <!-- Chuỗi ngày -->
+      <div class="sheet streak-card" id="hStreak"></div>
+
+      <!-- Mục tiêu hôm nay -->
+      <div class="sheet goals">
+        <div class="row between">
+          <h3>Mục tiêu hôm nay</h3>
+          <button type="button" class="small-btn" id="goalEdit">✎ Sửa mục tiêu</button>
+        </div>
+        <div class="rings" id="hRings"></div>
+        <form class="goal-form" id="goalForm" hidden>
+          <label class="field"><span>Ôn thẻ / ngày</span><input name="cards" type="number" min="1" max="500" inputmode="numeric"></label>
+          <label class="field"><span>Chép chính tả / ngày</span><input name="listen" type="number" min="1" max="500" inputmode="numeric"></label>
+          <button class="pri" type="submit">Lưu</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Nút đi học ngay -->
+    <div class="home-actions" id="hActions"></div>
+
+    <div class="grid2 mt-l">
+      <div class="sheet">
+        <h3>7 ngày qua</h3>
+        <div class="week-chart" id="hWeek"></div>
+        <div class="legend"><span><i class="c"></i>Ôn thẻ</span><span><i class="l"></i>Chép chính tả</span></div>
+      </div>
+      <div class="sheet">
+        <h3>12 tuần học</h3>
+        <div class="heat-wrap">
+          <div class="heat-days" aria-hidden="true"><span>T2</span><span></span><span>T4</span><span></span><span>T6</span><span></span><span>CN</span></div>
+          <div class="heat" id="hHeat"></div>
+        </div>
+        <div class="legend">
+          <span class="warn" id="hHeatNote"></span>
+          <span class="heat-scale">Ít <i class="h0"></i><i class="h1"></i><i class="h2"></i><i class="h3"></i><i class="h4"></i> Nhiều</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sheet mt-l">
+      <h3>Vườn cụm từ của bạn</h3>
+      <p class="warn" id="hGardenNote"></p>
+      <div class="garden" id="hGarden"></div>
+      <div class="garden-legend" id="hGardenLegend"></div>
+    </div>
+
+    <div class="sheet mt-l">
+      <h3>Huy hiệu</h3>
+      <div class="badges" id="hBadges"></div>
+    </div>
+
+    <div class="sheet mt-l">
+      <h3>Tổng kết</h3>
+      <div class="totals" id="hTotals"></div>
+      <div class="row mt">
+        <button id="reset">Đặt lại tiến độ ôn (giữ dữ liệu)</button>
+        <span class="msg" id="rmsg"></span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============ TAB 1: CỤM TỪ (flashcard) ============ -->
+  <section id="cum-tu">
+    <div class="row head-row">
+      <div>
+        <h2>Ôn cụm từ</h2>
+        <p class="sub tight" id="due">…</p>
+      </div>
+      <div class="topic-pick">
+        <select id="topic" aria-label="Chọn bộ cụm từ"></select>
+      </div>
+    </div>
+
+    <div class="deck">
+      <div class="cardx" id="card" tabindex="0" role="button" aria-label="Lật thẻ"></div>
+    </div>
+    <!-- Ô chọn ảnh (ẩn), mở ra khi bấm "Thêm ảnh minh họa" trên thẻ -->
+    <input type="file" id="cardImgFile" accept="image/*" hidden>
+
+    <!-- Hàng nút nghe -->
+    <div class="row center listen-row">
+      <button class="soft-btn" id="say">🔊 Cụm từ</button>
+      <button class="soft-btn" id="sayex">🔊 Câu ví dụ</button>
+    </div>
+    <p class="msg center speech-msg"></p>
+
+    <!-- Hàng nút chấm thẻ -->
+    <div class="row center">
+      <button class="again" id="again">Chưa nhớ</button>
+      <button class="good" id="good">Nhớ rồi</button>
+    </div>
+
+    <!-- Thông báo sau khi chấm thẻ, vd "Nhớ rồi! 🌱 Hạt mầm → 🌿 Nảy mầm" -->
+    <p class="rate-msg" id="ratemsg" aria-live="polite"></p>
+
+    <!-- Số thẻ ở 5 mức nhớ: Hạt mầm → Nở hoa -->
+    <div class="boxes" id="boxes"></div>
+    <p class="lv-help">Mỗi lần nhớ, cụm từ lớn thêm một bậc. Quên thì quay về 🌱 Hạt mầm.</p>
+
+    <p class="msg center"><a class="add-link" href="#nhap-cum-tu">➕ Thêm cụm từ</a></p>
+  </section>
+
+
+  <!-- ============ TAB 2: LUYỆN NGHE (chép chính tả) ============ -->
+  <section id="luyen-nghe">
+    <div class="row head-row">
+      <div>
+        <h2>Nghe – chép chính tả</h2>
+        <p class="sub tight">Nghe, gõ lại câu bạn nghe được, rồi kiểm tra. Từ sai sẽ được đánh dấu đỏ.</p>
+      </div>
+      <div class="row lpick">
+        <select id="lset" aria-label="Chọn bộ bài nghe"></select>
+        <select id="lorder" aria-label="Thứ tự">
+          <option value="seq">Lần lượt</option>
+          <option value="rand">Ngẫu nhiên</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sheet">
+      <div class="row">
+        <button class="pri" id="lplay">▶ Nghe câu</button>
+        <button id="lslow">🐢 Nghe chậm</button>
+        <span class="count" id="lnum"></span>
+      </div>
+
+      <textarea id="lin" class="mt" rows="3" placeholder="Gõ lại câu bạn nghe được… (Enter để kiểm tra)"></textarea>
+
+      <div class="row mt">
+        <button class="pri" id="lcheck">Kiểm tra</button>
+        <button id="lshow">Xem đáp án</button>
+        <button id="lprev">← Câu trước</button>
+        <button id="lnext">Câu tiếp →</button>
+      </div>
+
+      <!-- Kết quả so sánh từng từ -->
+      <div class="diff" id="ldiff" aria-live="polite"></div>
+      <div class="lmeta" id="lmeta"></div>
+    </div>
+
+    <p class="msg speech-msg" id="tts"></p>
+    <p class="msg center"><a class="add-link" href="#nhap-bai-nghe">➕ Thêm câu nghe</a></p>
+    <audio id="player" preload="auto"></audio>
+  </section>
+
+
+  <!-- ============ TAB 3: NHẬP DỮ LIỆU ============ -->
+  <!-- Gồm 3 màn hình (app.js tự ẩn / hiện theo địa chỉ):
+       #nhap-du-lieu  → màn chọn (#impHub): 2 nút lớn + dữ liệu của bạn
+       #nhap-cum-tu   → màn nhập cụm từ  (#impScreen, chỉ hiện các khung data-kind="p")
+       #nhap-bai-nghe → màn nhập bài nghe (#impScreen, chỉ hiện các khung data-kind="l") -->
+  <section id="nhap-du-lieu">
+
+    <!-- ===== Màn chọn ===== -->
+    <div id="impHub">
+      <h2>Nhập dữ liệu</h2>
+      <p class="sub">Bạn muốn thêm gì?</p>
+      <div class="imp-choices">
+        <a class="imp-choice" href="#nhap-cum-tu">
+          <span class="ic-icon" aria-hidden="true">📚</span>
+          <b>Nhập cụm từ</b>
+          <small id="impCountP"></small>
+        </a>
+        <a class="imp-choice" href="#nhap-bai-nghe">
+          <span class="ic-icon" aria-hidden="true">🎧</span>
+          <b>Nhập bài nghe</b>
+          <small id="impCountL"></small>
+        </a>
+      </div>
+    </div>
+
+    <!-- ===== Màn nhập (cụm từ hoặc bài nghe) ===== -->
+    <div id="impScreen" hidden>
+      <a class="back-link" href="#nhap-du-lieu">← Nhập dữ liệu</a>
+      <h2 id="impTitle"></h2>
+      <p class="sub">Thêm từng mục ngay trên trang, hoặc nhập nhiều mục một lúc từ file.</p>
+
+    <!-- Chọn cách nhập -->
+    <div class="seg import-mode" role="group" aria-label="Cách nhập dữ liệu">
+      <button type="button" data-mode="single" aria-pressed="true">✏️ Thêm từng mục</button>
+      <button type="button" data-mode="file" aria-pressed="false">📄 Nhập từ file</button>
+    </div>
+
+    <!-- ===== Cách 1: Thêm từng mục ===== -->
+    <div id="impSingle">
+      <div class="imp-one">
+
+        <!-- Form thêm cụm từ -->
+        <form class="sheet imp entry" id="fP" data-kind="p" novalidate>
+          <h3>Thêm cụm từ</h3>
+          <label class="field">
+            <span>Cụm từ tiếng Anh <b class="req">*</b></span>
+            <input name="p" autocomplete="off" placeholder="vd: make a decision">
+          </label>
+          <label class="field">
+            <span>Nghĩa tiếng Việt <b class="req">*</b></span>
+            <input name="m" autocomplete="off" placeholder="vd: đưa ra quyết định">
+          </label>
+          <label class="field">
+            <span>Dùng khi</span>
+            <input name="c" autocomplete="off" placeholder="vd: Khi phải chọn giữa nhiều phương án">
+          </label>
+          <label class="field">
+            <span>Câu ví dụ</span>
+            <input name="e" autocomplete="off" placeholder="vd: It took me a week to make a decision.">
+          </label>
+          <div class="field">
+            <span>Bộ</span>
+            <div class="row pair">
+              <select name="setPick" aria-label="Chọn bộ"></select>
+              <input name="setNew" placeholder="Tên bộ mới" aria-label="Tên bộ mới" hidden>
+            </div>
+          </div>
+          <label class="field">
+            <span>Ảnh minh họa</span>
+            <input type="file" name="img" accept="image/*">
+          </label>
+          <div class="thumb" id="fPthumb" hidden>
+            <img alt="Ảnh đã chọn">
+            <button type="button" id="fPimgClear">Bỏ ảnh</button>
+          </div>
+          <label class="field">
+            <span>Nguồn</span>
+            <input name="src" autocomplete="off" placeholder="vd: Tự soạn, Cambridge Dictionary">
+          </label>
+          <div class="row">
+            <button class="pri" type="submit">Lưu &amp; thêm tiếp</button>
+            <button class="good" type="button" data-then="learn">Lưu &amp; học ngay</button>
+          </div>
+          <p class="form-msg" aria-live="polite"></p>
+        </form>
+
+        <!-- Form thêm câu nghe -->
+        <form class="sheet imp entry" id="fL" data-kind="l" novalidate>
+          <h3>Thêm câu nghe</h3>
+          <label class="field">
+            <span>Câu tiếng Anh (đáp án) <b class="req">*</b></span>
+            <textarea name="text" rows="2" placeholder="vd: Welcome to the program."></textarea>
+          </label>
+          <label class="field">
+            <span>Nghĩa tiếng Việt</span>
+            <input name="tr" autocomplete="off" placeholder="Hiện sau khi kiểm tra">
+          </label>
+          <label class="field">
+            <span>Âm thanh</span>
+            <select name="audio"></select>
+          </label>
+          <label class="field">
+            <span>…hoặc tải tệp âm thanh mới</span>
+            <input type="file" name="audioFile" accept="audio/*">
+          </label>
+          <div class="row pair" id="fLrange" hidden>
+            <label class="field">
+              <span>Bắt đầu</span>
+              <input name="s" autocomplete="off" placeholder="vd 1:05">
+            </label>
+            <label class="field">
+              <span>Kết thúc</span>
+              <input name="e" autocomplete="off" placeholder="vd 1:09">
+            </label>
+          </div>
+          <div class="field">
+            <span>Bộ</span>
+            <div class="row pair">
+              <select name="setPick" aria-label="Chọn bộ"></select>
+              <input name="setNew" placeholder="Tên bộ mới" aria-label="Tên bộ mới" hidden>
+            </div>
+          </div>
+          <label class="field">
+            <span>Nguồn</span>
+            <input name="src" autocomplete="off" placeholder="vd: VOA Learning English">
+          </label>
+          <div class="row">
+            <button type="button" data-then="try">▶ Nghe thử</button>
+            <button class="pri" type="submit">Lưu &amp; thêm tiếp</button>
+            <button class="good" type="button" data-then="learn">Lưu &amp; luyện ngay</button>
+          </div>
+          <p class="form-msg" aria-live="polite"></p>
+        </form>
+      </div>
+    </div>
+
+    <!-- ===== Cách 2: Nhập từ file ===== -->
+    <div id="impFile" hidden>
+    <p class="sub">Dán bảng từ Google Sheets/Excel, hoặc chọn file <b>.csv</b>, <b>.tsv</b>, <b>.txt</b>, <b>.json</b>. Dòng đầu là tên cột (xem bảng bên dưới). File cặp câu tải từ Tatoeba hay ManyThings được tự nhận ra.</p>
+
+    <div class="imp-one">
+
+      <!-- Khung nhập cụm từ -->
+      <div class="sheet imp" id="impP" data-kind="p">
+        <h3>Nhập cụm từ</h3>
+        <table class="cols">
+          <thead><tr><th>Tên cột</th><th>Nội dung</th></tr></thead>
+          <tbody>
+            <tr><td><code>phrase</code> <span class="req">*</span></td><td>Cụm từ tiếng Anh</td></tr>
+            <tr><td><code>meaning</code> <span class="req">*</span></td><td>Nghĩa tiếng Việt</td></tr>
+            <tr><td><code>context</code></td><td>Dùng khi nào: tình huống, văn nói hay văn viết…</td></tr>
+            <tr><td><code>example</code></td><td>Câu ví dụ</td></tr>
+            <tr><td><code>topic</code></td><td>Chủ đề / tên bộ</td></tr>
+            <tr><td><code>source</code></td><td>Nguồn (để ghi công tác giả)</td></tr>
+            <tr><td><code>image</code></td><td>Tên ảnh đã tải lên (vd <i>apple.jpg</i>) hoặc link ảnh</td></tr>
+          </tbody>
+        </table>
+
+        <div class="field">
+          <span>Ảnh minh họa (jpg, png, webp, gif) – ảnh lớn được tự thu nhỏ</span>
+          <input type="file" id="ifile" accept="image/*" multiple aria-label="Tải ảnh minh họa">
+        </div>
+        <ul class="sets" id="ilist"></ul>
+
+        <div class="row">
+          <button id="pcopy">Sao chép mẫu</button>
+          <button id="pfill">Dán mẫu vào ô</button>
+        </div>
+        <div class="file">
+          <input type="file" id="pfile" accept=".csv,.tsv,.txt,.json,text/csv,text/plain,application/json" aria-label="Chọn file cụm từ">
+        </div>
+        <textarea id="pin" rows="7" placeholder="phrase&#9;meaning&#9;context&#9;example&#9;topic&#9;source&#10;make a decision&#9;đưa ra quyết định&#9;Khi phải chọn…&#9;…" aria-label="Dán dữ liệu cụm từ"></textarea>
+
+        <label class="field">
+          <span>Tên bộ (dùng khi dữ liệu không có cột topic)</span>
+          <input id="pset" placeholder="vd: IELTS Collocations">
+        </label>
+
+        <div class="opts" role="radiogroup" aria-label="Cách nhập">
+          <label><input type="radio" name="pmode" value="add" checked> Thêm vào dữ liệu hiện có</label>
+          <label><input type="radio" name="pmode" value="replace"> Thay toàn bộ cụm từ</label>
+        </div>
+
+        <div class="row">
+          <button class="pri" id="pprev">Xem trước</button>
+          <button class="good" id="pgo" disabled>Nhập</button>
+        </div>
+        <div class="prev" id="pout" aria-live="polite"></div>
+      </div>
+
+      <!-- Khung nhập bài nghe -->
+      <div class="sheet imp" id="impL" data-kind="l">
+        <h3>Nhập bài nghe</h3>
+        <table class="cols">
+          <thead><tr><th>Tên cột</th><th>Nội dung</th></tr></thead>
+          <tbody>
+            <tr><td><code>text</code> <span class="req">*</span></td><td>Câu tiếng Anh (đáp án chép chính tả)</td></tr>
+            <tr><td><code>translation</code></td><td>Nghĩa tiếng Việt, hiện sau khi kiểm tra</td></tr>
+            <tr><td><code>audio</code></td><td>Tên file đã tải lên (vd <i>bai1.mp3</i>) hoặc link. Để trống thì máy đọc bằng giọng tự động.</td></tr>
+            <tr><td><code>start</code>, <code>end</code></td><td>Đoạn cần nghe trong file dài, vd <i>1:05</i> và <i>1:09</i></td></tr>
+            <tr><td><code>topic</code>, <code>source</code></td><td>Tên bộ và nguồn</td></tr>
+          </tbody>
+        </table>
+
+        <div class="field">
+          <span>Tệp âm thanh (mp3, m4a, wav, ogg)</span>
+          <input type="file" id="afile" accept="audio/*" multiple aria-label="Tải tệp âm thanh">
+        </div>
+        <ul class="sets" id="alist"></ul>
+
+        <div class="row mt">
+          <button id="lcopy">Sao chép mẫu</button>
+          <button id="lfill">Dán mẫu vào ô</button>
+        </div>
+        <div class="file">
+          <input type="file" id="lfile" accept=".csv,.tsv,.txt,.json,text/csv,text/plain,application/json" aria-label="Chọn file bài nghe">
+        </div>
+        <textarea id="lpin" rows="7" placeholder="text&#9;translation&#9;audio&#9;start&#9;end&#9;topic&#9;source" aria-label="Dán dữ liệu bài nghe"></textarea>
+
+        <label class="field">
+          <span>Tên bộ (dùng khi dữ liệu không có cột topic)</span>
+          <input id="lsetname" placeholder="vd: VOA tuần 1">
+        </label>
+
+        <div class="opts" role="radiogroup" aria-label="Cách nhập">
+          <label><input type="radio" name="lmode" value="add" checked> Thêm vào dữ liệu hiện có</label>
+          <label><input type="radio" name="lmode" value="replace"> Thay toàn bộ bài nghe</label>
+        </div>
+
+        <div class="row">
+          <button class="pri" id="lpv">Xem trước</button>
+          <button class="good" id="lgo" disabled>Nhập</button>
+        </div>
+        <div class="prev" id="lout" aria-live="polite"></div>
+      </div>
+    </div>
+    </div><!-- hết #impFile -->
+    </div><!-- hết #impScreen -->
+
+    <!-- Dữ liệu đã có + gợi ý nguồn: chỉ hiện ở màn chọn -->
+
+    <div class="grid2 mt" id="impData">
+
+      <!-- Danh sách bộ đã có, sao lưu / khôi phục -->
+      <div class="sheet">
+        <h3>Dữ liệu của bạn</h3>
+        <p class="warn">Bấm Xóa hai lần để xác nhận. Tiến độ ôn của bộ bị xóa cũng mất theo.</p>
+
+        <b class="set-title">Bộ cụm từ</b>
+        <ul class="sets" id="psets"></ul>
+
+        <b class="set-title">Bộ bài nghe</b>
+        <ul class="sets" id="lsets"></ul>
+
+        <div class="row mt">
+          <button id="bcopy">Sao chép bản sao lưu</button>
+          <button id="brest">Khôi phục từ bản sao lưu</button>
+        </div>
+        <textarea id="bbox" class="mt-s" rows="4" hidden aria-label="Bản sao lưu"></textarea>
+        <p class="msg" id="bmsg"></p>
+      </div>
+
+      <!-- Gợi ý nguồn -->
+      <div class="sheet">
+        <h3>Gợi ý nguồn công khai</h3>
+        <ul class="srcs">
+          <li><a href="https://tatoeba.org/en/downloads">Tatoeba – Downloads</a>: tải file cặp câu Anh–Việt (tab-delimited), nhập thẳng vào cụm từ hoặc bài nghe. Câu chữ theo giấy phép CC BY 2.0 FR. File ghi âm thì mỗi người đóng góp tự chọn giấy phép.</li>
+          <li><a href="https://www.manythings.org/anki/">ManyThings – Anki sentence pairs</a>: file <i>vie-eng</i> lấy câu từ Tatoeba, có sẵn cột ghi công.</li>
+          <li><a href="https://learningenglish.voanews.com/">VOA Learning English</a>: bài đọc chậm, có transcript. Tải mp3 về, chép từng câu vào cột text, ghi thời điểm start/end.</li>
+        </ul>
+        <p class="warn">Luôn điền cột <b>source</b> để ghi công tác giả, và kiểm tra giấy phép của nguồn trước khi chia sẻ dữ liệu cho người khác.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============ TAB 4: IELTS ============ -->
+  <section id="ielts">
+    <h2>Luyện IELTS</h2>
+    <p class="sub">Speaking có đồng hồ như phòng thi; Writing đếm số từ và giờ làm bài.</p>
+
+    <div class="grid2">
+
+      <!-- Speaking -->
+      <div class="sheet">
+        <div class="row between">
+          <b>Speaking</b>
+          <select id="spart" style="width:auto" aria-label="Chọn phần thi">
+            <option value="1">Part 1</option>
+            <option value="2">Part 2</option>
+            <option value="3">Part 3</option>
+          </select>
+        </div>
+        <div class="q" id="sq"></div>
+        <div class="big" id="stime">0:00</div>
+        <p class="msg" id="sphase">Bấm "Bắt đầu" để tính giờ.</p>
+        <div class="row">
+          <button class="pri" id="sstart">Bắt đầu</button>
+          <button id="snew">Câu khác</button>
+          <button id="ssay">🔊 Nghe câu hỏi</button>
+        </div>
+      </div>
+
+      <!-- Writing Task 2 -->
+      <div class="sheet">
+        <div class="row between">
+          <b>Writing Task 2</b>
+          <button id="wnew">Đề khác</button>
+        </div>
+        <div class="q" id="wq"></div>
+        <textarea id="wtext" rows="9" placeholder="Viết bài của bạn ở đây (bài nháp được lưu tự động)…" aria-label="Bài viết"></textarea>
+        <div class="row between mt-s">
+          <span><b id="wc">0</b> / 250 từ</span>
+          <span class="big small" id="wtime">40:00</span>
+          <button class="pri" id="wstart">Bắt đầu 40 phút</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <b>Cụm từ hữu ích cho Speaking và Writing</b>
+      <ul class="list" id="bank"></ul>
+    </div>
+  </section>
+
+
+  <small class="note">Bộ "Mẫu" và đề IELTS là nội dung mẫu do Claude soạn. Dữ liệu bạn nhập chỉ lưu trên trình duyệt này, nên hãy dùng "Sao chép bản sao lưu" để giữ lại.</small>
+</main>
+
+<!-- Thông báo nổi (vd chúc mừng chuỗi 7 ngày) -->
+<div class="toast" id="toast" role="status" hidden></div>
+
+<!-- Hộp tài khoản: đăng nhập / đăng ký / quên mật khẩu (nội dung do account.js vẽ) -->
+<dialog class="acc-dialog" id="account" aria-label="Tài khoản">
+  <div class="acc-inner">
+    <button type="button" class="acc-close" id="accClose" aria-label="Đóng">×</button>
+    <div id="accBody"></div>
+  </div>
+</dialog>
+
+<!-- Dữ liệu mẫu phải nạp trước app.js -->
+<script src="data/phrases.js"></script>
+<script src="data/listening.js"></script>
+<script src="data/ielts.js"></script>
+<script src="app.js"></script>
+<script src="sync.js"></script>
+
+<!-- Tài khoản (Supabase). Không có mạng thì thư viện không tải được, web vẫn chạy bình thường. -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0/dist/umd/supabase.js"></script>
+<script src="config.js"></script>
+<script src="account.js"></script>
+</body>
+</html>

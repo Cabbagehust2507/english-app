@@ -294,6 +294,80 @@ section.on { display: block; }
 }
 .add-link:hover { border-color: var(--acc); }
 
+/* --- Kho học liệu --- */
+.lib-paths { display: grid; gap: 16px; }
+.lib-path { margin: 0; }
+.lib-path.soon { opacity: .75; }
+.lib-path-head { display: flex; gap: 12px; align-items: flex-start; }
+.lib-path-head b { display: block; font-size: 18px; }
+.lib-path-head small, .lib-now-text small, .home-path-card small { display: block; color: var(--soft); font-size: 14px; }
+.lib-path-icon { font-size: 30px; line-height: 1.1; flex: none; }
+.lib-path-progress { display: flex; align-items: center; gap: 10px; margin: 14px 0 6px; font-size: 13px; color: var(--soft); }
+.lib-path-progress .lib-bar { flex: 1; }
+
+/* Thanh tiến độ */
+.lib-bar { height: 8px; border-radius: 99px; background: var(--plane); overflow: hidden; margin-top: 6px; }
+.lib-bar i { display: block; height: 100%; border-radius: 99px; background: var(--good); }
+
+/* 3 chấm chặng */
+.lib-stages {
+  list-style: none; padding: 0; margin: 12px 0;
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px;
+}
+.lib-stages li { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; font-size: 13px; color: var(--soft); }
+.lib-dot {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; border: 1.5px solid var(--line); background: var(--card); color: var(--soft);
+}
+.lib-stages .done .lib-dot { background: var(--okbg); border-color: var(--good); color: var(--ok); }
+.lib-stages .now { color: var(--acc); font-weight: 600; }
+.lib-stages .now .lib-dot { background: var(--btn); border-color: var(--btn); color: var(--btnink); border-width: 2px; }
+
+/* Khung chặng đang học */
+.lib-now {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 14px;
+  border: 2px solid var(--acc); background: var(--plane);
+}
+.lib-now-text { flex: 1 1 220px; min-width: 0; }
+.lib-now-text b { display: block; }
+.lib-now.soon { border-style: dashed; border-color: var(--line); color: var(--soft); }
+.lib-now.finished { border-color: var(--good); background: var(--okbg); color: var(--ok); font-weight: 600; }
+
+/* Chip lọc */
+.lib-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 14px; }
+.lib-chip {
+  min-height: 34px; padding: 0 14px; border-radius: 99px;
+  border: 1.5px solid var(--line); background: var(--card); color: var(--soft);
+  font-size: 14px; font-weight: 600;
+}
+.lib-chip[aria-pressed="true"] { background: var(--btn); border-color: var(--btn); color: var(--btnink); }
+
+/* Lưới các bộ */
+.lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 12px; }
+.lib-card {
+  display: flex; flex-direction: column; gap: 3px;
+  padding: 14px; border-radius: 16px;
+  border: 1.5px solid var(--line); background: var(--card);
+}
+.lib-card-icon { font-size: 26px; line-height: 1.2; }
+.lib-card small { color: var(--soft); font-size: 13px; }
+.lib-card .lib-place { color: var(--acc); }
+.lib-card-act { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: auto; padding-top: 8px; }
+.lib-card-act .small-btn { border: 1.5px solid var(--line); color: var(--ink); }
+.lib-added { font-size: 13px; font-weight: 600; color: var(--ok); }
+
+/* Ô "Chặng tiếp theo" ở Trang chủ */
+.home-path { margin-top: 14px; }
+.home-path-card {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+  margin: 0; color: var(--ink); text-decoration: none;
+}
+a.home-path-card:hover { border-color: var(--acc); }
+.home-path-card > div { flex: 1 1 220px; min-width: 0; }
+.home-path-go { font-size: 22px; color: var(--acc); }
+
 /* Tờ giấy trắng chứa nội dung */
 .sheet {
   background: var(--card);

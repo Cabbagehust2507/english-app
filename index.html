@@ -66,6 +66,9 @@
     <!-- Nút đi học ngay -->
     <div class="home-actions" id="hActions"></div>
 
+    <!-- Lộ trình đang học (Kho học liệu) -->
+    <div class="home-path" id="hPath"></div>
+
     <div class="grid2 mt-l">
       <div class="sheet">
         <h3>7 ngày qua</h3>
@@ -215,7 +218,25 @@
           <b>Nhập bài nghe</b>
           <small id="impCountL"></small>
         </a>
+        <a class="imp-choice" href="#kho-hoc-lieu">
+          <span class="ic-icon" aria-hidden="true">📦</span>
+          <b>Kho học liệu</b>
+          <small id="impCountLib"></small>
+        </a>
       </div>
+    </div>
+
+    <!-- ===== Màn Kho học liệu (vẽ bằng drawLibrary trong app.js) ===== -->
+    <div id="libScreen" hidden>
+      <a class="back-link" href="#nhap-du-lieu">← Nhập dữ liệu</a>
+      <h2>📦 Kho học liệu</h2>
+      <p class="sub">Chọn lộ trình để học theo từng chặng, hoặc thêm riêng bộ bạn thích.</p>
+      <!-- Các lộ trình -->
+      <div class="lib-paths" id="libPaths"></div>
+      <!-- Tất cả các bộ -->
+      <h3 class="mt-l">📚 Tất cả các bộ</h3>
+      <div class="lib-chips" id="libChips" role="group" aria-label="Lọc các bộ"></div>
+      <div class="lib-grid" id="libGrid"></div>
     </div>
 
     <!-- ===== Màn nhập (cụm từ hoặc bài nghe) ===== -->
@@ -537,6 +558,7 @@
 <script src="data/phrases.js"></script>
 <script src="data/listening.js"></script>
 <script src="data/ielts.js"></script>
+<script src="data/library.js"></script>
 <script src="app.js"></script>
 <script src="sync.js"></script>
 

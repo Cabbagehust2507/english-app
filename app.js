@@ -1620,8 +1620,11 @@ function showImportScreen(kind) {
   importKind = kind;
   $('impHub').hidden = kind !== '';
   $('impData').hidden = kind !== '';
-  $('impScreen').hidden = kind === '';
-  if (kind) {
+  $('impScreen').hidden = kind !== 'p' && kind !== 'l';
+  $('libScreen').hidden = kind !== 'lib';
+  if (kind === 'lib') {
+    drawLibrary();
+  } else if (kind) {
     $('impTitle').textContent = IMPORT_TITLES[kind];
     // Chỉ hiện các khung cùng loại (form + khung nhập file)
     document.querySelectorAll('#impScreen [data-kind]').forEach(el => {
@@ -1638,6 +1641,8 @@ function drawImportCounts() {
   const text = (n, unit, list) => n ? `Đang có ${n} ${unit} · ${setsOf(list).length} bộ` : `Chưa có ${unit} nào`;
   $('impCountP').textContent = text(cards.length, 'cụm từ', cards);
   $('impCountL').textContent = text(listen.length, 'câu nghe', listen);
+  const ready = LIBRARY.paths.filter(p => !p.soon).length;
+  $('impCountLib').textContent = `${ready} lộ trình · ${LIBRARY.sets.length} bộ có sẵn`;
 }
 
 // --- Ô chọn bộ (dùng chung cho hai form) ---
@@ -1960,12 +1965,14 @@ $('brest').onclick = () => {
       .map(c => ({
         id: c.id || uid(), t: c.t || 'Bộ của tôi', p: c.p, m: c.m, c: c.c || '', e: c.e || '',
         src: c.src || '', img: c.img || '', box: c.box || 1, due: c.due || 0,
+        ...(c.lib ? { lib: c.lib } : {}), // thẻ lấy từ Kho học liệu
       }));
     listen = data.listening
       .filter(x => x && x.text)
       .map(x => ({
         id: x.id || uid(), text: x.text, tr: x.tr || '', audio: x.audio || '',
         s: x.s ?? null, e: x.e ?? null, t: x.t || 'Bộ của tôi', src: x.src || '',
+        ...(x.lib ? { lib: x.lib } : {}),
       }));
 
     save();
@@ -1977,6 +1984,359 @@ $('brest').onclick = () => {
     $('bmsg').textContent = 'Bản sao lưu không hợp lệ.';
   }
 };
+
+
+/* === 9b. KHO HỌC LIỆU ======================================= */
+// Các bộ có sẵn trong data/library.js. Khi thêm vào học, mỗi thẻ / câu được gắn
+// trường "lib" = mã bộ (vd "ielts-edu"), nhờ đó biết bộ nào đã thêm và tính tiến độ.
+// Xóa bộ ở "Dữ liệu của bạn" thì bộ trở lại trạng thái chưa thêm.
+
+const LEARNED_BOX = 3;     // từ 🪴 Cây non trở lên thì tính là "đang nhớ"
+const STAGE_DONE = 0.8;    // nhớ được 80% số cụm từ thì xong chặng / nhóm
+let libFilter = 'all';     // chip lọc đang chọn ở lưới các bộ
+
+function libSet(id) {
+  return LIBRARY.sets.find(s => s.id === id);
+}
+
+// Các thẻ / câu đã thêm vào học của một bộ
+function libItems(set) {
+  return (set.kind === 'p' ? cards : listen).filter(x => x.lib === set.id);
+}
+
+function libAdded(set) {
+  return libItems(set).length > 0;
+}
+
+// Tiến độ của các bộ cụm từ trong danh sách: { learned, total }
+// (bộ câu nghe không có mức nhớ nên không tính)
+function libProgress(sets) {
+  let learned = 0;
+  let total = 0;
+  sets.filter(s => s && s.kind === 'p').forEach(set => {
+    const added = libItems(set);
+    learned += added.filter(c => c.box >= LEARNED_BOX).length;
+    total += added.length || set.items.length; // chưa thêm thì tính theo số mục trong kho
+  });
+  return { learned, total };
+}
+
+function libDone(sets) {
+  const { learned, total } = libProgress(sets);
+  return total > 0 && learned / total >= STAGE_DONE;
+}
+
+// Các bộ của một chặng / một nhóm
+function stageSets(stage) {
+  return stage.groups.flat().map(libSet);
+}
+function groupSets(group) {
+  return group.map(libSet);
+}
+
+// Chặng đang học = chặng đầu tiên chưa xong (bằng stages.length nếu đã xong hết)
+function currentStageIndex(path) {
+  const i = path.stages.findIndex(st => !libDone(stageSets(st)));
+  return i === -1 ? path.stages.length : i;
+}
+
+// Thêm một bộ vào học. Bỏ qua mục đã có sẵn trong dữ liệu (trùng chữ).
+// Trả về { added, skipped }
+function addLibSet(set) {
+  let added = 0;
+  let skipped = 0;
+  if (set.kind === 'p') {
+    const have = new Set(cards.map(c => c.p.toLowerCase()));
+    set.items.forEach(([p, m, c, e]) => {
+      if (have.has(p.toLowerCase())) { skipped++; return; }
+      cards.push({ id: uid(), t: set.name, p, m, c: c || '', e: e || '', src: 'Kho học liệu', box: 1, due: 0, lib: set.id });
+      added++;
+    });
+  } else {
+    const have = new Set(listen.map(x => listenKey(x.text, x.audio, x.s)));
+    set.items.forEach(([text, tr]) => {
+      if (have.has(listenKey(text, '', null))) { skipped++; return; }
+      listen.push({ id: uid(), text, tr: tr || '', audio: '', s: null, e: null, t: set.name, src: 'Kho học liệu', lib: set.id });
+      added++;
+    });
+  }
+  return { added, skipped };
+}
+
+// Thêm nhiều bộ cùng lúc, lưu, báo bằng thông báo nổi
+function addLibSets(sets) {
+  const counts = {}; // đơn vị -> số mục đã thêm, vd { "từ": 74, "câu nghe": 10 }
+  let skipped = 0;
+  sets.forEach(set => {
+    if (libAdded(set)) return;
+    const r = addLibSet(set);
+    skipped += r.skipped;
+    if (r.added) counts[unitOf(set)] = (counts[unitOf(set)] || 0) + r.added;
+  });
+  const parts = Object.entries(counts).map(([unit, n]) => `${n} ${unit}`);
+  if (!save()) {
+    showToast('⚠️ Chưa thêm được', 'Bộ nhớ trình duyệt đã đầy. Hãy xóa bớt bộ cũ.');
+    return false;
+  }
+  refreshAll();
+  if (parts.length) {
+    showToast('✓ Đã thêm vào học', parts.join(' + ') + (skipped ? ` (bỏ qua ${skipped} mục đã có)` : ''));
+  }
+  return true;
+}
+
+// Mở tab học của một nhóm bộ: ưu tiên bộ cụm từ, không có thì bộ câu nghe
+function openLibGroup(sets) {
+  const p = sets.find(s => s.kind === 'p' && libAdded(s));
+  const l = sets.find(s => s.kind === 'l' && libAdded(s));
+  if (p) {
+    $('topic').value = p.name;
+    extra = false;
+    nextCard();
+    location.hash = '#cum-tu';
+  } else if (l) {
+    $('lset').value = l.name;
+    showListen();
+    location.hash = '#luyen-nghe';
+  }
+}
+
+// Nút "Bắt đầu chặng / Học tiếp" của một lộ trình
+function continuePath(path) {
+  const si = currentStageIndex(path);
+  if (si >= path.stages.length) return;
+  const groups = path.stages[si].groups;
+  if (!groups.length) return; // chặng chưa có nội dung (sắp có)
+  store.set('lib_last', path.id); // nhớ lộ trình học gần nhất (hiện ở Trang chủ)
+
+  // Nhóm đầu tiên còn bộ chưa thêm
+  const gi = groups.findIndex(g => groupSets(g).some(s => !libAdded(s)));
+  if (gi === -1) {
+    // Đã thêm hết: mở nhóm đầu tiên chưa nhớ đủ 80%
+    const g = groups.find(g => !libDone(groupSets(g))) || groups[groups.length - 1];
+    openLibGroup(groupSets(g));
+    return;
+  }
+  // Chỉ thêm nhóm mới khi nhóm trước đã nhớ đủ 80% (tránh quá nhiều thẻ một lúc)
+  if (gi > 0 && !libDone(groupSets(groups[gi - 1]))) {
+    openLibGroup(groupSets(groups[gi - 1]));
+    return;
+  }
+  if (addLibSets(groupSets(groups[gi]))) openLibGroup(groupSets(groups[gi]));
+}
+
+// Đơn vị đếm của một bộ: "cụm từ" hoặc "câu nghe" (bộ có thể tự đặt unit riêng, vd "từ")
+function unitOf(set) {
+  return set.unit || (set.kind === 'p' ? 'cụm từ' : 'câu nghe');
+}
+
+// Dòng mô tả một chặng, vd "20 cụm từ + 10 câu nghe" hoặc "9 bộ · 339 từ"
+function stageSummary(stage) {
+  const sets = stageSets(stage);
+  const count = kind => sets.filter(s => s.kind === kind).reduce((n, s) => n + s.items.length, 0);
+  const parts = [];
+  const p = sets.find(s => s.kind === 'p');
+  if (count('p')) parts.push(`${count('p')} ${unitOf(p)}`);
+  if (count('l')) parts.push(`${count('l')} câu nghe`);
+  const many = stage.groups.length > 1 ? `${stage.groups.length} bộ · ` : '';
+  return many + parts.join(' + ');
+}
+
+// Chặng chia nhiều bộ: bộ đang học = bộ đầu tiên chưa nhớ đủ 80%, vd "Bộ 2/9: Cơ thể & sức khỏe"
+function currentGroupText(stage) {
+  if (stage.groups.length < 2) return '';
+  const i = stage.groups.findIndex(g => !libDone(groupSets(g)));
+  if (i === -1) return '';
+  const set = groupSets(stage.groups[i])[0];
+  const short = set.name.split(' · ').pop(); // bỏ phần tên lộ trình ở đầu
+  return `Bộ ${i + 1}/${stage.groups.length}: ${esc(short)}${libAdded(set) ? '' : ' (chưa thêm)'}`;
+}
+
+// Thanh tiến độ nhỏ
+function libBar(value, total) {
+  const pct = total ? Math.round(value / total * 100) : 0;
+  return `<div class="lib-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}"><i style="width:${pct}%"></i></div>`;
+}
+
+// Vẽ một lộ trình: 3 chấm chặng + khung chặng đang học
+function pathHtml(path) {
+  const head =
+    `<div class="lib-path-head"><span class="lib-path-icon" aria-hidden="true">${path.icon}</span>` +
+    `<div><b>${esc(path.name)}</b><small>${esc(path.desc)}</small></div></div>`;
+
+  if (path.soon) {
+    return `<div class="sheet lib-path soon">${head}` +
+      `<p class="warn">Sắp có: ${path.stages.map(st => esc(st.name)).join(' → ')}</p></div>`;
+  }
+
+  const si = currentStageIndex(path);
+  const n = path.stages.length;
+  const dots = path.stages.map((st, i) => {
+    const state = i < si ? 'done' : i === si ? 'now' : 'next';
+    const mark = i < si ? '✓' : i + 1;
+    return `<li class="${state}"><span class="lib-dot">${mark}</span><span>${esc(st.name)}</span></li>`;
+  }).join('');
+
+  let current;
+  if (si >= n) {
+    current = '<div class="lib-now finished">🎉 Bạn đã hoàn thành lộ trình này! Tiếp tục ôn để các cụm từ nở hoa 🌸.</div>';
+  } else if (!path.stages[si].groups.length) {
+    current = `<div class="lib-now soon">⏳ Chặng ${si + 1} · ${esc(path.stages[si].name)} sắp có. ` +
+      'Trong lúc chờ, hãy tiếp tục ôn các từ đã học.</div>';
+  } else {
+    const stage = path.stages[si];
+    const sets = stageSets(stage);
+    const started = sets.some(libAdded);
+    const { learned, total } = libProgress(sets);
+    const groupText = started ? currentGroupText(stage) : '';
+    current =
+      '<div class="lib-now">' +
+        `<div class="lib-now-text"><b>Chặng ${si + 1} · ${esc(stage.name)}</b>` +
+        `<small>${stageSummary(stage)}${started ? ` · đang nhớ ${learned}/${total}` : ''}</small>` +
+        (groupText ? `<small>${groupText}</small>` : '') +
+        (started ? libBar(learned, total) : '') + '</div>' +
+        `<button type="button" class="pri" data-lib-go="${path.id}">${started ? 'Học tiếp →' : 'Bắt đầu chặng →'}</button>` +
+      '</div>';
+  }
+
+  return `<div class="sheet lib-path">${head}` +
+    `<div class="lib-path-progress"><span>Đã xong ${Math.min(si, n)}/${n} chặng</span>${libBar(Math.min(si, n), n)}</div>` +
+    `<ol class="lib-stages">${dots}</ol>${current}</div>`;
+}
+
+// Lộ trình + chặng của một bộ, vd "IELTS Band 6 → 7 · Chặng 2"
+function setPlace(set) {
+  for (const path of LIBRARY.paths) {
+    const i = path.stages.findIndex(st => st.groups.flat().includes(set.id));
+    if (i !== -1) return { path, label: `${path.name} · Chặng ${i + 1}` };
+  }
+  return { path: null, label: '' };
+}
+
+// Vẽ một ô trong lưới các bộ
+function setCardHtml(set) {
+  const unit = unitOf(set);
+  let action;
+  if (libAdded(set)) {
+    const status = set.kind === 'p'
+      ? (() => { const r = libProgress([set]); return `✓ Đã thêm · nhớ ${r.learned}/${r.total}`; })()
+      : `✓ Đã thêm · ${libItems(set).length} câu`;
+    action = `<span class="lib-added">${status}</span>` +
+      `<button type="button" class="small-btn" data-lib-open="${set.id}">Học →</button>`;
+  } else {
+    action = `<button type="button" class="small-btn" data-lib-add="${set.id}">+ Thêm vào học</button>`;
+  }
+  return '<div class="lib-card">' +
+    `<span class="lib-card-icon" aria-hidden="true">${set.icon}</span>` +
+    `<b>${esc(set.name)}</b>` +
+    `<small>${set.kind === 'p' ? '📚' : '🎧'} ${set.items.length} ${unit} · ${esc(set.level)}</small>` +
+    `<small class="lib-place">${esc(setPlace(set).label)}</small>` +
+    `<div class="lib-card-act">${action}</div></div>`;
+}
+
+// Các chip lọc: Tất cả / Cụm từ / Bài nghe / Chưa thêm / từng lộ trình
+function libChips() {
+  const chips = [['all', 'Tất cả'], ['p', '📚 Cụm từ'], ['l', '🎧 Bài nghe'], ['new', 'Chưa thêm']];
+  LIBRARY.paths.filter(p => !p.soon).forEach(p => chips.push([p.id, `${p.icon} ${p.name}`]));
+  return chips.map(([id, label]) =>
+    `<button type="button" class="lib-chip" data-lib-filter="${id}" aria-pressed="${id === libFilter}">${esc(label)}</button>`
+  ).join('');
+}
+
+function libFilterMatch(set) {
+  if (libFilter === 'all') return true;
+  if (libFilter === 'p' || libFilter === 'l') return set.kind === libFilter;
+  if (libFilter === 'new') return !libAdded(set);
+  const place = setPlace(set);
+  return place.path && place.path.id === libFilter;
+}
+
+function drawLibrary() {
+  $('libPaths').innerHTML = LIBRARY.paths.map(pathHtml).join('');
+  $('libChips').innerHTML = libChips();
+  const sets = LIBRARY.sets.filter(libFilterMatch);
+  $('libGrid').innerHTML = sets.length
+    ? sets.map(setCardHtml).join('')
+    : '<p class="warn">Không có bộ nào ở mục này. Bạn đã thêm hết rồi 🎉</p>';
+}
+
+// Bấm các nút trong màn Kho học liệu
+$('libScreen').addEventListener('click', e => {
+  const go = e.target.closest('[data-lib-go]');
+  const add = e.target.closest('[data-lib-add]');
+  const open = e.target.closest('[data-lib-open]');
+  const filter = e.target.closest('[data-lib-filter]');
+  if (go) {
+    continuePath(LIBRARY.paths.find(p => p.id === go.dataset.libGo));
+  } else if (add) {
+    const set = libSet(add.dataset.libAdd);
+    const place = setPlace(set);
+    if (place.path) store.set('lib_last', place.path.id);
+    addLibSets([set]);
+    drawLibrary();
+  } else if (open) {
+    openLibGroup([libSet(open.dataset.libOpen)]);
+  } else if (filter) {
+    libFilter = filter.dataset.libFilter;
+    drawLibrary();
+  }
+});
+
+// --- Trang chủ: ô "Chặng tiếp theo" ---
+// Hiện lộ trình học gần nhất; chưa học lộ trình nào thì mời vào Kho học liệu.
+function drawHomePath() {
+  const ready = LIBRARY.paths.filter(p => !p.soon);
+  const startedPaths = ready.filter(p => stageSets({ groups: p.stages.flatMap(st => st.groups) }).some(libAdded));
+  const last = startedPaths.find(p => p.id === store.get('lib_last', '')) || startedPaths[0];
+
+  if (!last) {
+    $('hPath').innerHTML =
+      '<a class="sheet home-path-card" href="#kho-hoc-lieu">' +
+        '<span class="lib-path-icon" aria-hidden="true">📦</span>' +
+        '<div><b>Khám phá Kho học liệu</b>' +
+        `<small>Lộ trình có sẵn: ${ready.map(p => esc(p.name)).join(', ')}</small></div>` +
+        '<span class="home-path-go" aria-hidden="true">→</span></a>';
+    return;
+  }
+
+  const si = currentStageIndex(last);
+  if (si >= last.stages.length) {
+    $('hPath').innerHTML =
+      `<a class="sheet home-path-card" href="#kho-hoc-lieu"><span class="lib-path-icon" aria-hidden="true">${last.icon}</span>` +
+      `<div><b>🎉 Đã xong lộ trình ${esc(last.name)}</b><small>Chọn lộ trình tiếp theo trong Kho học liệu</small></div>` +
+      '<span class="home-path-go" aria-hidden="true">→</span></a>';
+    return;
+  }
+  const stage = last.stages[si];
+  if (!stage.groups.length) {
+    // Chặng tiếp theo chưa có nội dung
+    $('hPath').innerHTML =
+      `<a class="sheet home-path-card" href="#kho-hoc-lieu"><span class="lib-path-icon" aria-hidden="true">${last.icon}</span>` +
+      `<div><b>🧭 ${esc(last.name)} · Chặng ${si + 1}: ${esc(stage.name)} sắp có</b>` +
+      '<small>Tiếp tục ôn các từ đã học, hoặc chọn lộ trình khác</small></div>' +
+      '<span class="home-path-go" aria-hidden="true">→</span></a>';
+    return;
+  }
+  const started = stageSets(stage).some(libAdded);
+  const { learned, total } = libProgress(stageSets(stage));
+  const unit = unitOf(stageSets(stage).find(s => s.kind === 'p'));
+  const groupText = started ? currentGroupText(stage) : '';
+  const detail = started
+    ? `<small>Đang nhớ ${learned}/${total} ${unit} (cần ${Math.ceil(total * STAGE_DONE)} để qua chặng)</small>` +
+      (groupText ? `<small>${groupText}</small>` : '') + libBar(learned, total)
+    : `<small>Chặng mới: ${stageSummary(stage)}</small>`;
+  $('hPath').innerHTML =
+    '<div class="sheet home-path-card">' +
+      `<span class="lib-path-icon" aria-hidden="true">${last.icon}</span>` +
+      `<div class="lib-now-text"><b>🧭 ${esc(last.name)} · Chặng ${si + 1}/${last.stages.length}: ${esc(stage.name)}</b>` +
+      detail + '</div>' +
+      `<button type="button" class="pri" data-lib-go="${last.id}">${started ? 'Học tiếp →' : 'Bắt đầu chặng →'}</button>` +
+    '</div>';
+}
+$('hPath').addEventListener('click', e => {
+  const go = e.target.closest('[data-lib-go]');
+  if (go) continuePath(LIBRARY.paths.find(p => p.id === go.dataset.libGo));
+});
 
 
 /* === 10. IELTS ============================================= */
@@ -2140,6 +2500,7 @@ function drawHome() {
   drawStreakCard();
   drawGoals();
   drawHomeActions();
+  drawHomePath();
   drawWeekChart();
   drawHeatmap();
   drawGarden();
@@ -2405,6 +2766,7 @@ function refreshAll() {
   fillForms();
   drawHome();
   drawImportCounts();
+  if (!$('libScreen').hidden) drawLibrary();
 }
 
 
@@ -2454,7 +2816,7 @@ if (SHOW_IELTS) VIEWS.push('ielts');
 document.querySelector('nav a[href="#ielts"]').hidden = !SHOW_IELTS;
 
 // Hai màn con của tab Nhập dữ liệu: địa chỉ → loại dữ liệu ('p' cụm từ, 'l' bài nghe)
-const IMPORT_SCREENS = { 'nhap-cum-tu': 'p', 'nhap-bai-nghe': 'l' };
+const IMPORT_SCREENS = { 'nhap-cum-tu': 'p', 'nhap-bai-nghe': 'l', 'kho-hoc-lieu': 'lib' };
 
 function route() {
   const hash = location.hash.slice(1);

@@ -13,8 +13,9 @@ Website cá nhân để mình tự học tiếng Anh, tập trung vào 3 phần:
 - Chuỗi ngày: huy hiệu 🔥 ở đầu trang (viền đứt khi hôm nay chưa học), chúc mừng ở mốc 3/7/30/100 ngày. Ngày tính theo giờ trên máy (`dateKey`), không dùng `toISOString`.
 
 ## Nguồn dữ liệu: người dùng tự nhập
-Nội dung học lấy từ nguồn công khai do mình chọn (Tatoeba, ManyThings, VOA Learning English…) và nhập qua mục **Nhập dữ liệu**. Không tự viết cứng dữ liệu vào code, trừ bộ "Mẫu".
+Nội dung học lấy từ nguồn công khai do mình chọn (Tatoeba, ManyThings, VOA Learning English…) và nhập qua mục **Nhập dữ liệu**. Không tự viết cứng dữ liệu vào code, trừ bộ "Mẫu" và **Kho học liệu** (`data/library.js`).
 - Tab **Nhập dữ liệu** (`#nhap-du-lieu`) là màn chọn: 2 nút lớn **📚 Nhập cụm từ** (`#nhap-cum-tu`) và **🎧 Nhập bài nghe** (`#nhap-bai-nghe`), kèm "Dữ liệu của bạn" và gợi ý nguồn. Mỗi màn nhập có hai cách: Thêm từng mục / Nhập từ file (lưu ở `eng_importmode`). Các khung thuộc màn nào được đánh dấu `data-kind="p"` hoặc `"l"`. Tab Cụm từ và Luyện nghe có nút ➕ dẫn thẳng tới màn nhập tương ứng.
+- **Kho học liệu** (`#kho-hoc-lieu`, nút 📦 ở màn Nhập dữ liệu): lộ trình (mỗi lộ trình 3 chặng; IELTS Band 6 → 7 và Tiếng Anh công sở; chặng chưa có `groups` hiện "sắp có") + lưới tất cả các bộ có chip lọc. Thêm bộ thì chép mục vào `eng_cards`/`eng_listen` kèm trường `lib` = mã bộ (bỏ qua mục trùng). Chặng xong khi 80% cụm từ đạt 🪴 Cây non trở lên (`LEARNED_BOX`, `STAGE_DONE`). Mỗi chặng chia `groups`; "Học tiếp" chỉ thêm nhóm sau khi nhóm trước nhớ đủ 80%. Lộ trình học gần nhất lưu ở `eng_lib_last`, hiện ở ô "🧭" Trang chủ.
 
 **Cụm từ**: cột `phrase`*, `meaning`*, `context` (dùng khi nào), `example`, `topic`, `source`, `image`.
 - `image` là tên ảnh đã tải lên (lưu trong IndexedDB `eng_images`, ảnh lớn tự thu nhỏ về cạnh 800px) hoặc link http(s). Có thể thêm ảnh trực tiếp trên mặt sau thẻ.
@@ -58,7 +59,7 @@ Nội dung học lấy từ nguồn công khai do mình chọn (Tatoeba, ManyThi
 - `app.js`: logic
 - `sync.js`: đồng bộ (nạp sau `app.js`); `account.js`: tài khoản (nạp cuối); `config.js`: thông tin kết nối Supabase
 - `supabase/setup.sql`: tạo bảng, quy tắc bảo mật, kho tệp; `docs/`: hướng dẫn
-- `data/phrases.js`, `data/listening.js`, `data/ielts.js`: bộ "Mẫu" và đề IELTS, khai báo biến `SAMPLE_PHRASES`, `SAMPLE_LISTENING`, `IELTS_DATA`. Dùng `.js` thay vì `.json` để nhấp đúp mở `index.html` vẫn chạy (trình duyệt chặn đọc `.json` khi mở bằng `file://`). Nạp trước `app.js`.
+- `data/phrases.js`, `data/listening.js`, `data/ielts.js`, `data/library.js`: bộ "Mẫu", đề IELTS và Kho học liệu, khai báo biến `SAMPLE_PHRASES`, `SAMPLE_LISTENING`, `IELTS_DATA`, `LIBRARY`. Dùng `.js` thay vì `.json` để nhấp đúp mở `index.html` vẫn chạy (trình duyệt chặn đọc `.json` khi mở bằng `file://`). Nạp trước `app.js`.
 
 ## Quy tắc khi viết code
 - Mình mới học lập trình: viết code đơn giản, dễ đọc, có comment tiếng Việt.

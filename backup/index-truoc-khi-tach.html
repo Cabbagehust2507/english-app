@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Học tiếng Anh mỗi ngày</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: warm, encouraging study companion — energetic but easy on the eyes
+   IDEA: a pocket study deck — index cards with a marking pen
+   PICTURE: the live flashcard / dictation sheet / timer itself, large at the top
+   COLOUR and TYPE: light = "Bình minh" (peach cream, apricot, teal); dark = "Hoàng hôn" (coffee, amber, soft green); Be Vietnam Pro
+   LAYOUT: modest title + tabs, the working card first, controls under it, one column on phones */
+:root{color-scheme:light dark;
+--bg:light-dark(#FFF6EE,#241A14);--ink:light-dark(#3A2618,#F6E8DC);--soft:light-dark(#7A5A44,#C9B3A2);
+--hd:light-dark(#F4A261,#241A14);--hdink:light-dark(#3A2618,#F6E8DC);--hdline:light-dark(transparent,#3E2F25);
+--tabon:light-dark(#FFF6EE,transparent);--tabink:light-dark(#B5541C,#F0A56B);--pill:light-dark(#FFF6EE,transparent);
+--acc:light-dark(#B5541C,#F0A56B);--card:light-dark(#FFFFFF,#33261D);--plane:light-dark(#FDE7D6,#2C211A);--line:light-dark(#F1CBAE,#4A382B);
+--btn:light-dark(#F4A261,#F0A56B);--btnink:light-dark(#3A2618,#241A14);
+--good:light-dark(#2F8F83,#9CCFA8);--goodink:light-dark(#FFFFFF,#1B2A20);
+--again:light-dark(#F6D3BA,#4A382B);--againink:light-dark(#3A2618,#F6E8DC);
+--ok:light-dark(#1F6F55,#9CCFA8);--okbg:light-dark(#D5EEEA,#1F3326);--red:light-dark(#C0392B,#FF8A78);--badbg:light-dark(#FBE0DA,#4A2620);
+--shadow:light-dark(rgba(150,70,20,.35),rgba(240,165,107,.30))}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Be Vietnam Pro",system-ui,sans-serif;overflow-x:clip;transition:background .3s,color .3s}
+header{background:var(--hd);color:var(--hdink);padding:22px max(5vw,16px) 0;border-bottom:1px solid var(--hdline)}
+.top{max-width:1000px;margin:auto;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+h1{font-size:clamp(26px,4vw,36px);line-height:1.05;margin:0;font-weight:800;text-wrap:balance}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.streak{font-weight:700;background:var(--pill);color:var(--ink);border:1.5px solid light-dark(transparent,#F0A56B);padding:7px 14px;border-radius:99px;white-space:nowrap;font-size:15px}
+:root[data-theme=dark] .streak{color:#F0A56B}
+.themebtn{min-height:40px;padding:0 14px;border-radius:99px;background:var(--pill);border:1.5px solid light-dark(transparent,#4A382B);color:var(--ink);display:flex;gap:6px;align-items:center;font-size:15px}
+.themebtn svg{width:18px;height:18px}
+nav{max-width:1000px;margin:18px auto 0;display:flex;gap:4px;overflow-x:auto}
+nav a{flex:none;color:var(--hdink);text-decoration:none;padding:12px 16px;border-radius:14px 14px 0 0;font-weight:600;border-bottom:3px solid transparent}
+nav a[aria-current]{background:var(--tabon);color:var(--tabink);font-weight:700}
+:root[data-theme=dark] nav a:not([aria-current]){color:#C9B3A2}
+:root[data-theme=dark] nav a[aria-current]{border-bottom-color:#F0A56B}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) nav a:not([aria-current]){color:#C9B3A2}:root:not([data-theme=light]) nav a[aria-current]{border-bottom-color:#F0A56B}:root:not([data-theme=light]) .streak{color:#F0A56B}}
+main{max-width:1000px;margin:auto;padding:28px max(5vw,16px) 60px}
+section{display:none}section.on{display:block}
+h2{font-size:24px;margin:0 0 6px}p.sub{color:var(--soft);margin:0 0 20px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button,select,input,textarea{font:inherit;font-size:16px;color:inherit}
+button{min-height:44px;padding:0 18px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);cursor:pointer;font-weight:600;transition:transform .1s}
+button:active{transform:translateY(1px)}
+button.pri{background:var(--btn);border-color:var(--btn);color:var(--btnink);font-weight:700}
+button.good{background:var(--good);border-color:var(--good);color:var(--goodink);font-weight:700}
+button.again{background:var(--again);border-color:var(--again);color:var(--againink);font-weight:700}
+button.red{background:var(--red);border-color:var(--red);color:#fff}
+button:disabled{opacity:.45;cursor:default}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,nav a:focus-visible,.cardx:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+select,input,textarea{min-height:44px;border:1.5px solid var(--line);border-radius:12px;background:var(--card);padding:8px 12px;width:100%}
+.deck{position:relative;margin:0 auto 18px;max-width:640px}
+.cardx{position:relative;min-height:280px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px;box-shadow:0 10px 0 -2px var(--plane),0 24px 40px -24px var(--shadow);cursor:pointer;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:6px}
+.phrase{font-size:clamp(28px,5vw,40px);font-weight:800;line-height:1.1;color:var(--ink)}
+.mean{font-size:20px;font-weight:600;margin-top:12px;color:var(--acc)}.ex{color:var(--soft);font-style:italic;margin-top:6px}
+.tag{display:inline-block;font-size:13px;font-weight:700;color:var(--acc);background:var(--plane);padding:4px 12px;border-radius:99px;margin-bottom:10px}
+.hint{font-size:13px;color:var(--soft);margin-top:18px}
+.boxes{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:20px auto 0;max-width:640px}
+.boxes div{background:var(--plane);border-radius:14px;padding:10px;text-align:center;font-size:13px}.boxes b{display:block;font-size:22px}
+.boxes div:last-child{background:var(--okbg)}
+.panel{background:var(--plane);border-radius:18px;padding:20px;margin-top:22px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:18px}
+.sheet{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px}
+.diff{font-size:19px;line-height:1.9;margin-top:14px}.diff span{padding:2px 6px;border-radius:6px;margin-right:2px}
+.g{background:var(--okbg);color:var(--ok)}.b{background:var(--badbg);color:var(--red);text-decoration:line-through}.m{background:var(--badbg);color:var(--red);font-weight:700}
+.big{font-size:clamp(48px,10vw,80px);font-weight:800;line-height:1;font-variant-numeric:tabular-nums;color:var(--acc)}
+.q{font-size:21px;font-weight:600;line-height:1.35}
+.q ul{font-size:16px;font-weight:400;margin:10px 0 0}
+.bar{height:12px;background:var(--plane);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--btn);border-radius:99px}
+.stat{display:grid;grid-template-columns:7em minmax(0,1fr) 3em;gap:10px;align-items:center;margin:8px 0}.stat span:last-child{text-align:right}
+.msg{color:var(--soft);font-size:14px;min-height:1.4em;margin-top:8px}
+.list{columns:2 260px;padding-left:18px}.list li{margin:4px 0;break-inside:avoid}
+small.note{display:block;color:var(--soft);font-size:13px;margin-top:24px}
+@media(prefers-reduced-motion:no-preference){.flip{animation:fl .35s ease}@keyframes fl{from{transform:translateY(8px) scale(.98);opacity:.3}}}
+@media(max-width:600px){.cardx{padding:24px 18px;min-height:240px}.boxes{gap:6px}.boxes div{font-size:11px;padding:8px 4px}}
+.cardx .src{font-size:12px;color:var(--soft);margin-top:14px}
+.imp h3{margin:0 0 4px;font-size:20px}
+.cols{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0 14px}
+.cols th,.cols td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.cols th{font-weight:700;color:var(--soft);font-size:13px}
+.cols code{font-weight:700;color:var(--acc)}
+.req{color:var(--red);font-weight:700}
+.imp textarea{font-size:14px;font-family:ui-monospace,Menlo,Consolas,monospace;white-space:pre;overflow:auto}
+.file{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+.file input[type=file]{width:auto;flex:1 1 220px;padding:8px}
+.opts{display:flex;flex-wrap:wrap;gap:14px;margin:12px 0}
+.opts label{display:flex;gap:6px;align-items:center;min-height:44px}
+.opts input[type=radio]{width:20px;height:20px;min-height:0}
+.field{display:grid;gap:4px;margin:10px 0}.field span{font-size:14px;font-weight:600}
+.prev{margin-top:14px}
+.prev .sum{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.chip{padding:4px 12px;border-radius:99px;font-size:14px;font-weight:700;background:var(--plane)}
+.chip.ok{background:var(--okbg);color:var(--ok)}.chip.bad{background:var(--badbg);color:var(--red)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:12px;max-height:280px}
+.tbl table{border-collapse:collapse;width:100%;font-size:14px}
+.tbl th,.tbl td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.tbl th{position:sticky;top:0;background:var(--card);font-size:13px;color:var(--soft)}
+.errs{color:var(--red);font-size:14px;margin:10px 0 0;padding-left:18px;max-height:140px;overflow:auto}
+.warn{color:var(--soft);font-size:14px}
+.sets{list-style:none;padding:0;margin:8px 0 0}
+.sets li{display:flex;gap:10px;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.sets li button{min-height:36px;padding:0 12px;font-size:14px}
+pre.sample{background:var(--plane);border-radius:12px;padding:12px;font-size:13px;overflow-x:auto;margin:8px 0}
+.srcs{padding-left:18px}.srcs li{margin:8px 0}.srcs a{color:var(--acc);font-weight:600}
+.lmeta{font-size:14px;color:var(--soft);margin-top:10px}
+</style>
+</head>
+<body>
+<header><div class="top"><h1>Học tiếng Anh mỗi ngày</h1><div class="tools"><span class="streak" id="streak">Chuỗi 0 ngày</span><button class="themebtn" id="theme" type="button"></button></div></div>
+<nav aria-label="Chọn phần học"><a href="#cum-tu">Cụm từ</a><a href="#luyen-nghe">Luyện nghe</a><a href="#nhap-du-lieu">Nhập dữ liệu</a><a href="#ielts">IELTS</a><a href="#tien-do">Tiến độ</a></nav></header>
+<main>
+<section id="cum-tu">
+  <div class="row" style="justify-content:space-between;margin-bottom:18px"><div><h2>Ôn cụm từ</h2><p class="sub" style="margin:0" id="due">…</p></div>
+  <div style="width:min(100%,240px)"><select id="topic" aria-label="Chọn bộ cụm từ"></select></div></div>
+  <div class="deck"><div class="cardx" id="card" tabindex="0" role="button" aria-label="Lật thẻ"></div></div>
+  <div class="row" style="justify-content:center"><button id="say">🔊 Nghe</button><button class="again" id="again">Chưa nhớ</button><button class="good" id="good">Nhớ rồi</button></div>
+  <div class="boxes" id="boxes"></div>
+  <p class="msg" style="text-align:center">Muốn thêm cụm từ? Vào <a href="#nhap-du-lieu" style="color:var(--acc);font-weight:600">Nhập dữ liệu</a>.</p>
+</section>
+
+<section id="luyen-nghe">
+  <div class="row" style="justify-content:space-between;margin-bottom:18px"><div><h2>Nghe – chép chính tả</h2><p class="sub" style="margin:0">Nghe, gõ lại câu bạn nghe được, rồi kiểm tra. Từ sai sẽ được đánh dấu đỏ.</p></div>
+  <div class="row" style="width:min(100%,420px);flex-wrap:nowrap"><select id="lset" aria-label="Chọn bộ bài nghe" style="flex:1"></select><select id="lorder" aria-label="Thứ tự" style="width:auto;flex:none;min-width:136px"><option value="seq">Lần lượt</option><option value="rand">Ngẫu nhiên</option></select></div></div>
+  <div class="sheet">
+    <div class="row"><button class="pri" id="lplay">▶ Nghe câu</button><button id="lslow">🐢 Nghe chậm</button><span id="lnum" style="color:var(--soft);margin-left:auto"></span></div>
+    <textarea id="lin" rows="3" style="margin-top:14px" placeholder="Gõ lại câu bạn nghe được… (Enter để kiểm tra)"></textarea>
+    <div class="row" style="margin-top:12px"><button class="pri" id="lcheck">Kiểm tra</button><button id="lshow">Xem đáp án</button><button id="lprev">← Câu trước</button><button id="lnext">Câu tiếp →</button></div>
+    <div class="diff" id="ldiff" aria-live="polite"></div>
+    <div class="lmeta" id="lmeta"></div>
+  </div>
+  <p class="msg" id="tts"></p>
+  <audio id="player" preload="auto"></audio>
+</section>
+
+<section id="nhap-du-lieu">
+  <h2>Nhập dữ liệu</h2><p class="sub">Dán bảng từ Google Sheets/Excel, hoặc chọn file <b>.csv</b>, <b>.tsv</b>, <b>.txt</b>, <b>.json</b>. Dòng đầu là tên cột (xem bảng bên dưới). File cặp câu tải từ Tatoeba hay ManyThings được tự nhận ra.</p>
+  <div class="grid2">
+    <div class="sheet imp" id="impP">
+      <h3>Nhập cụm từ</h3>
+      <table class="cols"><thead><tr><th>Tên cột</th><th>Nội dung</th></tr></thead><tbody>
+        <tr><td><code>phrase</code> <span class="req">*</span></td><td>Cụm từ tiếng Anh</td></tr>
+        <tr><td><code>meaning</code> <span class="req">*</span></td><td>Nghĩa tiếng Việt</td></tr>
+        <tr><td><code>example</code></td><td>Câu ví dụ</td></tr>
+        <tr><td><code>topic</code></td><td>Chủ đề / tên bộ</td></tr>
+        <tr><td><code>source</code></td><td>Nguồn (để ghi công tác giả)</td></tr></tbody></table>
+      <div class="row"><button id="pcopy">Sao chép mẫu</button><button id="pfill">Dán mẫu vào ô</button></div>
+      <div class="file"><input type="file" id="pfile" accept=".csv,.tsv,.txt,.json,text/csv,text/plain,application/json" aria-label="Chọn file cụm từ"></div>
+      <textarea id="pin" rows="7" placeholder="phrase&#9;meaning&#9;example&#9;topic&#9;source&#10;make a decision&#9;đưa ra quyết định&#9;…" aria-label="Dán dữ liệu cụm từ"></textarea>
+      <label class="field"><span>Tên bộ (dùng khi dữ liệu không có cột topic)</span><input id="pset" placeholder="vd: IELTS Collocations"></label>
+      <div class="opts" role="radiogroup" aria-label="Cách nhập"><label><input type="radio" name="pmode" value="add" checked> Thêm vào dữ liệu hiện có</label><label><input type="radio" name="pmode" value="replace"> Thay toàn bộ cụm từ</label></div>
+      <div class="row"><button class="pri" id="pprev">Xem trước</button><button class="good" id="pgo" disabled>Nhập</button></div>
+      <div class="prev" id="pout" aria-live="polite"></div>
+    </div>
+
+    <div class="sheet imp" id="impL">
+      <h3>Nhập bài nghe</h3>
+      <table class="cols"><thead><tr><th>Tên cột</th><th>Nội dung</th></tr></thead><tbody>
+        <tr><td><code>text</code> <span class="req">*</span></td><td>Câu tiếng Anh (đáp án chép chính tả)</td></tr>
+        <tr><td><code>translation</code></td><td>Nghĩa tiếng Việt, hiện sau khi kiểm tra</td></tr>
+        <tr><td><code>audio</code></td><td>Tên file đã tải lên (vd <i>bai1.mp3</i>) hoặc link. Để trống thì máy đọc bằng giọng tự động.</td></tr>
+        <tr><td><code>start</code>, <code>end</code></td><td>Đoạn cần nghe trong file dài, vd <i>1:05</i> và <i>1:09</i></td></tr>
+        <tr><td><code>topic</code>, <code>source</code></td><td>Tên bộ và nguồn</td></tr></tbody></table>
+      <div class="field"><span>Tệp âm thanh (mp3, m4a, wav, ogg)</span><input type="file" id="afile" accept="audio/*" multiple aria-label="Tải tệp âm thanh"></div>
+      <ul class="sets" id="alist"></ul>
+      <div class="row" style="margin-top:12px"><button id="lcopy">Sao chép mẫu</button><button id="lfill">Dán mẫu vào ô</button></div>
+      <div class="file"><input type="file" id="lfile" accept=".csv,.tsv,.txt,.json,text/csv,text/plain,application/json" aria-label="Chọn file bài nghe"></div>
+      <textarea id="lpin" rows="7" placeholder="text&#9;translation&#9;audio&#9;start&#9;end&#9;topic&#9;source" aria-label="Dán dữ liệu bài nghe"></textarea>
+      <label class="field"><span>Tên bộ (dùng khi dữ liệu không có cột topic)</span><input id="lsetname" placeholder="vd: VOA tuần 1"></label>
+      <div class="opts" role="radiogroup" aria-label="Cách nhập"><label><input type="radio" name="lmode" value="add" checked> Thêm vào dữ liệu hiện có</label><label><input type="radio" name="lmode" value="replace"> Thay toàn bộ bài nghe</label></div>
+      <div class="row"><button class="pri" id="lpv">Xem trước</button><button class="good" id="lgo" disabled>Nhập</button></div>
+      <div class="prev" id="lout" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="grid2" style="margin-top:18px">
+    <div class="sheet"><h3 style="margin:0">Dữ liệu của bạn</h3>
+      <p class="warn" style="margin:4px 0 0">Bấm Xóa hai lần để xác nhận. Tiến độ ôn của bộ bị xóa cũng mất theo.</p>
+      <b style="display:block;margin-top:14px">Bộ cụm từ</b><ul class="sets" id="psets"></ul>
+      <b style="display:block;margin-top:14px">Bộ bài nghe</b><ul class="sets" id="lsets"></ul>
+      <div class="row" style="margin-top:16px"><button id="bcopy">Sao chép bản sao lưu</button><button id="brest">Khôi phục từ bản sao lưu</button></div>
+      <textarea id="bbox" rows="4" style="margin-top:10px;display:none" aria-label="Bản sao lưu"></textarea>
+      <p class="msg" id="bmsg"></p>
+    </div>
+    <div class="sheet"><h3 style="margin:0">Gợi ý nguồn công khai</h3>
+      <ul class="srcs">
+        <li><a href="https://tatoeba.org/en/downloads">Tatoeba – Downloads</a>: tải file cặp câu Anh–Việt (tab-delimited), nhập thẳng vào cụm từ hoặc bài nghe. Câu chữ theo giấy phép CC BY 2.0 FR. File ghi âm thì mỗi người đóng góp tự chọn giấy phép.</li>
+        <li><a href="https://www.manythings.org/anki/">ManyThings – Anki sentence pairs</a>: file <i>vie-eng</i> lấy câu từ Tatoeba, có sẵn cột ghi công.</li>
+        <li><a href="https://learningenglish.voanews.com/">VOA Learning English</a>: bài đọc chậm, có transcript. Tải mp3 về, chép từng câu vào cột text, ghi thời điểm start/end.</li>
+      </ul>
+      <p class="warn">Luôn điền cột <b>source</b> để ghi công tác giả, và kiểm tra giấy phép của nguồn trước khi chia sẻ dữ liệu cho người khác.</p>
+    </div>
+  </div>
+</section>
+
+<section id="ielts">
+  <h2>Luyện IELTS</h2><p class="sub">Speaking có đồng hồ như phòng thi; Writing đếm số từ và giờ làm bài.</p>
+  <div class="grid2">
+    <div class="sheet"><div class="row" style="justify-content:space-between"><b>Speaking</b>
+      <select id="spart" style="width:auto" aria-label="Chọn phần thi"><option value="1">Part 1</option><option value="2">Part 2</option><option value="3">Part 3</option></select></div>
+      <div class="q" id="sq" style="margin:16px 0"></div>
+      <div class="big" id="stime">0:00</div><p class="msg" id="sphase">Bấm "Bắt đầu" để tính giờ.</p>
+      <div class="row"><button class="pri" id="sstart">Bắt đầu</button><button id="snew">Câu khác</button><button id="ssay">🔊 Nghe câu hỏi</button></div></div>
+    <div class="sheet"><div class="row" style="justify-content:space-between"><b>Writing Task 2</b><button id="wnew">Đề khác</button></div>
+      <div class="q" id="wq" style="margin:16px 0"></div>
+      <textarea id="wtext" rows="9" placeholder="Viết bài của bạn ở đây (bài nháp được lưu tự động)…" aria-label="Bài viết"></textarea>
+      <div class="row" style="margin-top:10px;justify-content:space-between"><span><b id="wc">0</b> / 250 từ</span><span class="big" id="wtime" style="font-size:28px">40:00</span><button class="pri" id="wstart">Bắt đầu 40 phút</button></div></div>
+  </div>
+  <div class="panel"><b>Cụm từ hữu ích cho Speaking và Writing</b><ul class="list" id="bank"></ul></div>
+</section>
+
+<section id="tien-do">
+  <h2>Tiến độ của bạn</h2><p class="sub">Dữ liệu chỉ lưu trên trình duyệt này.</p>
+  <div class="grid2"><div class="sheet"><b>Cụm từ theo mức nhớ</b><div id="pbox" style="margin-top:12px"></div></div>
+  <div class="sheet"><b>Tổng kết</b><div id="psum" style="margin-top:12px"></div></div></div>
+  <div class="row" style="margin-top:20px"><button id="reset">Đặt lại tiến độ ôn (giữ dữ liệu)</button><span class="msg" id="rmsg"></span></div>
+</section>
+<small class="note">Bộ "Mẫu" và đề IELTS là nội dung mẫu do Claude soạn. Dữ liệu bạn nhập chỉ lưu trên trình duyệt này, nên hãy dùng "Sao chép bản sao lưu" để giữ lại.</small>
+</main>
+<script>
+{
+/*PARSER-START*/
+const strip=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[đĐ]/g,'d').toLowerCase().trim().replace(/[\s-]+/g,'_');
+const ALIAS={
+ phrase:{p:['p','phrase','cum_tu','english','en','eng','term','word','front','collocation','idiom'],m:['m','meaning','nghia','vietnamese','vi','vie','definition','back','translation','dich'],e:['e','example','vi_du','sentence','cau_vi_du'],t:['t','topic','chu_de','set','deck','bo','tag','tags','category'],src:['source','nguon','attribution','credit']},
+ listen:{text:['text','transcript','sentence','cau','english','en','eng','phrase'],tr:['tr','translation','dich','nghia','vietnamese','vi','vie','meaning'],audio:['audio','file','url','audio_url','tep','mp3'],s:['s','start','bat_dau','from','tu'],e:['e','end','ket_thuc','to','den'],t:['t','topic','chu_de','set','deck','bo','tag','category'],src:['source','nguon','attribution','credit']}};
+const ORDER={phrase:['p','m','e','t','src'],listen:['text','tr','audio','s','e','t','src']};
+function parseDelimited(text){
+ text=String(text).replace(/^﻿/,'').replace(/\r\n?/g,'\n');
+ const first=text.split('\n').find(l=>l.trim())||'';
+ const cnt=c=>first.split(c).length-1;
+ const d=cnt('\t')?'\t':cnt(';')>cnt(',')?';':',';
+ const rows=[];let row=[],f='',q=false;
+ for(let i=0;i<text.length;i++){const c=text[i];
+  if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+  else if(c==='"'&&f==='')q=true;
+  else if(c===d){row.push(f);f=''}
+  else if(c==='\n'){row.push(f);rows.push(row);row=[];f=''}
+  else f+=c}
+ row.push(f);rows.push(row);
+ return rows.map(r=>r.map(x=>x.trim())).filter(r=>r.some(x=>x))}
+function toSec(v){v=String(v==null?'':v).trim();if(!v)return null;
+ if(/^\d+(\.\d+)?$/.test(v))return +v;
+ const m=v.match(/^(?:(\d+):)?(\d{1,2}):(\d{1,2}(?:[.,]\d+)?)$/);if(!m)return NaN;
+ return (+(m[1]||0))*3600+(+m[2])*60+parseFloat(m[3].replace(',','.'))}
+function mapObj(o,kind){const A=ALIAS[kind],r={};
+ for(const k in o){const n=strip(k);for(const key in A)if(r[key]==null&&A[key].includes(n))r[key]=o[k]==null?'':String(o[k]).trim()}return r}
+function toRecords(text,kind){
+ const t=String(text).trim();if(!t)return{recs:[],how:'empty'};
+ if(t[0]==='['||t[0]==='{'){let j;try{j=JSON.parse(t)}catch(e){return{recs:[],how:'json',fatal:'JSON không hợp lệ: '+e.message}}
+  if(!Array.isArray(j))j=j[kind==='phrase'?'phrases':'listening']||j.items||[];
+  return{recs:j.map(o=>typeof o==='object'&&o?mapObj(o,kind):{}),how:'JSON',base:1,unit:'Mục'}}
+ const rows=parseDelimited(t);if(!rows.length)return{recs:[],how:'empty'};
+ const A=ALIAS[kind],h=rows[0].map(strip),idx={};
+ h.forEach((c,i)=>{for(const key in A)if(idx[key]==null&&A[key].includes(c))idx[key]=i});
+ const main=ORDER[kind][0],second=ORDER[kind][1];
+ if(idx[main]!=null)return{recs:rows.slice(1).map(r=>{const o={};for(const k in idx)o[k]=r[idx[k]]||'';return o}),how:'theo tên cột',base:2};
+ const r0=rows[0];
+ if(r0.length>=4&&/^\d+$/.test(r0[0])&&/^\d+$/.test(r0[2]))
+  return{recs:rows.map(r=>({[main]:r[1]||'',[second]:r[3]||'',src:'Tatoeba #'+r[0]+' (CC BY 2.0 FR)'})),how:'cặp câu Tatoeba',base:1};
+ if(r0.length>=3&&/^CC-BY/i.test(r0[2]))
+  return{recs:rows.map(r=>({[main]:r[0]||'',[second]:r[1]||'',src:r[2]||''})),how:'file Anki (ManyThings)',base:1};
+ return{recs:rows.map(r=>{const o={};ORDER[kind].forEach((k,i)=>o[k]=r[i]||'');return o}),how:'theo thứ tự cột',base:1}}
+function validate(recs,kind,existing,setName,base=2,unit='Dòng'){
+ const ok=[],errs=[],seen=new Set(existing);let dups=0;
+ recs.forEach((r,i)=>{const line=unit+' '+(i+base);
+  if(kind==='phrase'){const p=(r.p||'').trim(),m=(r.m||'').trim();
+   if(!p||!m){errs.push(`${line}: thiếu ${!p?'phrase':'meaning'}`);return}
+   const key=p.toLowerCase();if(seen.has(key)){dups++;return}seen.add(key);
+   ok.push({p,m,e:(r.e||'').trim(),t:(r.t||'').trim()||setName,src:(r.src||'').trim()})}
+  else{const text=(r.text||'').trim();if(!text){errs.push(`${line}: thiếu text`);return}
+   const s=toSec(r.s),e=toSec(r.e);
+   if(Number.isNaN(s)||Number.isNaN(e)){errs.push(`${line}: start/end sai định dạng (dùng 75 hoặc 1:15)`);return}
+   if(s!=null&&e!=null&&e<=s){errs.push(`${line}: end phải lớn hơn start`);return}
+   const audio=(r.audio||'').trim(),key=(text+'|'+audio+'|'+s).toLowerCase();if(seen.has(key)){dups++;return}seen.add(key);
+   ok.push({text,tr:(r.tr||'').trim(),audio,s,e,t:(r.t||'').trim()||setName,src:(r.src||'').trim()})}});
+ return{ok,errs,dups}}
+/*PARSER-END*/
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{const v=localStorage.getItem('eng_'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('eng_'+k,JSON.stringify(v));return true}catch(e){return false}}};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const BASE=[["have a detrimental effect on","có ảnh hưởng tiêu cực đến","Plastic waste has a detrimental effect on marine life."],["raise awareness of","nâng cao nhận thức về","Schools should raise awareness of climate change."],["broaden your horizons","mở mang tầm mắt","Studying abroad can broaden your horizons."],["meet a deadline","kịp hạn chót","I worked late to meet the deadline."],["keep up with","theo kịp","It is hard to keep up with new technology."],["make ends meet","xoay xở đủ sống","Many families struggle to make ends meet."],["to be honest","thành thật mà nói","To be honest, I prefer staying at home."],["once in a blue moon","hiếm khi","I eat fast food once in a blue moon."]];
+const LISTEN=["I usually go to the library on Saturday mornings.","The museum is closed on Mondays for maintenance.","Could you tell me how to get to the train station?","The meeting has been moved to next Thursday afternoon.","Reading every day is the best way to build vocabulary."];
+const SPK={1:["Do you work or are you a student?","What do you usually do at the weekend?","Do you prefer reading books or watching films? Why?","How often do you use public transport?"],
+2:["Describe a skill you learned that you are proud of.|what the skill is;how you learned it;how long it took;and explain why you are proud of it","Describe a place you visited that was very peaceful.|where it was;when you went there;what you did there;and explain why it felt peaceful"],
+3:["Why do some people find it hard to learn new skills as adults?","How has technology changed the way people make friends?","Should governments spend more money on public parks? Why?"]};
+const WRT=["Some people believe that university education should be free for everyone. To what extent do you agree or disagree?","Many people now work from home. What are the advantages and disadvantages of this trend?","Children today spend too much time on electronic devices. What problems does this cause, and what solutions can you suggest?"];
+const BANK=["In my opinion, …","On the other hand, …","A good example of this is …","This is mainly because …","As a result, …","It is widely believed that …","To sum up, …","Let me think about that for a second."];
+const P_SAMPLE="phrase\tmeaning\texample\ttopic\tsource\nmake a decision\tđưa ra quyết định\tIt took me a week to make a decision.\tCông việc\tTự soạn\npay attention to\tchú ý đến\tPlease pay attention to the instructions.\tHọc tập\tTự soạn\n";
+const L_SAMPLE="text\ttranslation\taudio\tstart\tend\ttopic\tsource\nI usually walk to work.\tTôi thường đi bộ đi làm.\t\t\t\tHằng ngày\tTự soạn\nWelcome to the program.\tChào mừng đến với chương trình.\tbai1.mp3\t0:05\t0:09\tPodcast\tVOA Learning English\n";
+const INT=[0,0,1,3,7,16],DAY=864e5;
+let cards=store.get('cards',null);
+if(!cards)cards=BASE.map(b=>({id:uid(),t:'Mẫu',p:b[0],m:b[1],e:b[2],src:'',box:1,due:0}));
+let listen=store.get('listen',null);
+if(!listen)listen=LISTEN.map(x=>({id:uid(),text:x,tr:'',audio:'',s:null,e:null,t:'Mẫu',src:''}));
+let stats=store.get('stats',{reviews:0,listen:0,listenOk:0,speak:0,days:[]});
+function save(){const a=store.set('cards',cards),b=store.set('listen',listen);store.set('stats',stats);return a&&b}
+const today=()=>new Date().toISOString().slice(0,10);
+function markDay(){const d=today();if(!stats.days.includes(d)){stats.days.push(d);save()}showStreak()}
+function showStreak(){let n=0,t=new Date();const set=new Set(stats.days);if(!set.has(today()))t.setDate(t.getDate()-1);
+ while(set.has(t.toISOString().slice(0,10))){n++;t.setDate(t.getDate()-1)}$('streak').textContent='Chuỗi '+n+' ngày'}
+async function copyText(text,msgEl,box){try{await navigator.clipboard.writeText(text);msgEl.textContent='Đã sao chép.'}catch(e){if(box){box.style.display='block';box.value=text;box.select()}msgEl.textContent='Không sao chép tự động được. Hãy chọn nội dung trong ô rồi nhấn Ctrl+C.'}}
+/* speech */
+let voice=null;
+function pickVoice(){try{const v=speechSynthesis.getVoices();voice=v.find(x=>/en-GB/i.test(x.lang))||v.find(x=>/^en/i.test(x.lang))||null}catch(e){}}
+try{pickVoice();speechSynthesis.onvoiceschanged=pickVoice}catch(e){}
+function say(text,rate=1){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-GB';if(voice)u.voice=voice;u.rate=rate;speechSynthesis.speak(u);$('tts').textContent=''}catch(e){$('tts').textContent='Trình duyệt này chưa hỗ trợ giọng đọc tự động. Hãy thử Chrome hoặc Edge.'}}
+/* audio files in IndexedDB */
+let dbp=null,audioNames=[];const urlCache={};
+function db(){if(!dbp)dbp=new Promise((res,rej)=>{try{const r=indexedDB.open('eng_audio',1);r.onupgradeneeded=()=>r.result.createObjectStore('files');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}});return dbp}
+async function idb(mode,fn){const d=await db();return new Promise((res,rej)=>{const tx=d.transaction('files',mode),st=tx.objectStore('files'),q=fn(st);tx.oncomplete=()=>res(q&&q.result);tx.onerror=()=>rej(tx.error)})}
+async function loadAudioList(){try{const keys=await idb('readonly',s=>s.getAllKeys());audioNames=keys||[]}catch(e){audioNames=[]}drawAudioList()}
+function drawAudioList(){$('alist').innerHTML=audioNames.length?audioNames.map(n=>{const used=listen.filter(x=>x.audio===n).length;return `<li><span>🎧 ${esc(n)} <span class="warn">· ${used} câu dùng</span></span><button data-del-audio="${esc(n)}">Xóa</button></li>`}).join(''):'<li class="warn">Chưa có tệp âm thanh nào.</li>'}
+$('afile').onchange=async e=>{const fs=[...e.target.files];let n=0;
+ for(const f of fs){try{await idb('readwrite',s=>s.put(f,f.name));n++}catch(err){$('lout').innerHTML='<p class="errs">Không lưu được '+esc(f.name)+' (bộ nhớ trình duyệt có thể đã đầy).</p>'}}
+ e.target.value='';await loadAudioList();if(n)$('lout').innerHTML=`<p class="chip ok" style="display:inline-block">Đã lưu ${n} tệp âm thanh</p>`};
+$('alist').onclick=async e=>{const n=e.target.dataset.delAudio;if(n==null)return;
+ if(e.target.dataset.armed!=='1'){e.target.dataset.armed='1';e.target.textContent='Bấm lần nữa';e.target.classList.add('red');return}
+ try{await idb('readwrite',s=>s.delete(n))}catch(err){}delete urlCache[n];loadAudioList()};
+async function audioUrl(name){if(/^(https?:|blob:|data:)/i.test(name))return name;if(urlCache[name])return urlCache[name];
+ const f=await idb('readonly',s=>s.get(name));if(!f)return null;return urlCache[name]=URL.createObjectURL(f)}
+/* phrases */
+let cur=null,flipped=false,extra=false;
+const ALL='__all__';
+function setsOf(list){const m=new Map();list.forEach(x=>m.set(x.t,(m.get(x.t)||0)+1));return [...m]}
+function fillSelect(sel,list){const v=sel.value,s=setsOf(list);sel.innerHTML=`<option value="${ALL}">Tất cả (${list.length})</option>`+s.map(([t,n])=>`<option value="${esc(t)}">${esc(t)} (${n})</option>`).join('');if([...sel.options].some(o=>o.value===v))sel.value=v}
+function pool(){const t=$('topic').value;return cards.filter(c=>t===ALL||!t||c.t===t)}
+function nextCard(){const now=Date.now(),p=pool();let due=p.filter(c=>c.due<=now);
+ $('due').textContent=!p.length?'Bộ này chưa có cụm từ':due.length?`Còn ${due.length} thẻ cần ôn hôm nay`:'Bạn đã ôn hết thẻ hôm nay';
+ if(!due.length&&extra)due=p.slice().sort((a,b)=>a.box-b.box||a.due-b.due);
+ cur=due.length?due[Math.floor(Math.random()*Math.min(due.length,4))]:null;flipped=false;drawCard();drawBoxes()}
+function drawCard(){const el=$('card');el.classList.remove('flip');void el.offsetWidth;el.classList.add('flip');
+ ['say','again','good'].forEach(b=>$(b).disabled=!cur);
+ if(!cur){el.innerHTML=pool().length?`<div class="phrase" style="font-size:26px">Xong rồi! 🎉</div><div class="ex">Quay lại vào ngày mai, hoặc</div><div style="margin-top:14px"><button class="pri" id="more">Ôn thêm</button></div>`:`<div class="phrase" style="font-size:24px">Chưa có cụm từ</div><div class="ex">Vào mục Nhập dữ liệu để thêm bộ cụm từ của bạn.</div><div style="margin-top:14px"><a class="pri" href="#nhap-du-lieu" style="color:var(--acc);font-weight:700">Nhập dữ liệu →</a></div>`;
+  const m=$('more');if(m)m.onclick=e=>{e.stopPropagation();extra=true;nextCard()};return}
+ el.innerHTML=`<span class="tag">${esc(cur.t)} · hộp ${cur.box}</span><div class="phrase">${esc(cur.p)}</div>`+(flipped?`<div class="mean">${esc(cur.m)}</div>${cur.e?`<div class="ex">${esc(cur.e)}</div>`:''}${cur.src?`<div class="src">Nguồn: ${esc(cur.src)}</div>`:''}`:`<div class="hint">Nhấn vào thẻ để xem nghĩa</div>`)}
+function drawBoxes(){const p=pool();$('boxes').innerHTML=[1,2,3,4,5].map(b=>`<div><b>${p.filter(c=>c.box===b).length}</b>${b===5?'Thuộc':'Hộp '+b}</div>`).join('')}
+function rate(ok){if(!cur)return;cur.box=ok?Math.min(5,cur.box+1):1;cur.due=ok?Date.now()+Math.max(1,INT[cur.box])*DAY:Date.now()+60e3;stats.reviews++;save();markDay();nextCard()}
+$('card').onclick=()=>{if(!cur)return;flipped=!flipped;drawCard();if(flipped)say(cur.p)};
+$('card').onkeydown=e=>{if(e.target!==$('card'))return;if(e.key===' '||e.key==='Enter'){e.preventDefault();$('card').click()}};
+$('say').onclick=()=>cur&&say(cur.e||cur.p);$('again').onclick=()=>rate(false);$('good').onclick=()=>rate(true);
+$('topic').onchange=()=>{extra=false;nextCard()};
+/* listening */
+let lpos=store.get('lpos',{});
+function lpool(){const t=$('lset').value;return listen.filter(x=>t===ALL||!t||x.t===t)}
+function lkey(){return $('lset').value||ALL}
+function litem(){const p=lpool();if(!p.length)return null;const i=(lpos[lkey()]||0)%p.length;return p[i]}
+function showL(){const p=lpool(),it=litem();$('lin').value='';$('ldiff').innerHTML='';
+ ['lplay','lslow','lcheck','lshow','lnext','lprev'].forEach(b=>$(b).disabled=!it);
+ $('lnum').textContent=it?`Câu ${(lpos[lkey()]||0)%p.length+1} / ${p.length}`:'';
+ $('lmeta').innerHTML=it?`${it.audio?'🎧 '+esc(it.audio)+(it.s!=null?` · ${fmtT(it.s)}–${it.e!=null?fmtT(it.e):'hết'}`:''):'Giọng đọc tự động'}${it.src?' · Nguồn: '+esc(it.src):''}`:'Bộ này chưa có câu nào. Vào <a href="#nhap-du-lieu" style="color:var(--acc)">Nhập dữ liệu</a> để thêm.'}
+const fmtT=s=>{s=Math.round(s*10)/10;const m=Math.floor(s/60),r=(s%60).toFixed(s%1?1:0);return m+':'+String(r).padStart(s%1?4:2,'0')};
+const player=$('player');let stopAt=null;
+player.ontimeupdate=()=>{if(stopAt!=null&&player.currentTime>=stopAt){player.pause();stopAt=null}};
+player.onerror=()=>{$('tts').textContent='Không phát được âm thanh. Nếu dùng link web: link chỉ phát được khi bạn mở file index.html trên máy (bản xem trên Claude chặn link ngoài). Tệp bạn tải lên thì phát được ở cả hai nơi.'};
+async function playItem(slow){const it=litem();if(!it)return;$('tts').textContent='';
+ if(!it.audio){say(it.text,slow?0.65:0.95);return}
+ try{speechSynthesis.cancel()}catch(e){}
+ let url;try{url=await audioUrl(it.audio)}catch(e){url=null}
+ if(!url){$('tts').textContent=`Chưa có tệp "${it.audio}". Hãy tải tệp này lên ở mục Nhập dữ liệu (đúng tên file).`;return}
+ if(player.src!==url)player.src=url;player.playbackRate=slow?0.75:1;
+ const go=()=>{player.currentTime=it.s||0;stopAt=it.e;player.play().catch(()=>{$('tts').textContent='Trình duyệt chặn phát âm thanh. Hãy bấm Nghe lần nữa.'})};
+ if(player.readyState>=1)go();else player.addEventListener('loadedmetadata',go,{once:true})}
+const norm=s=>s.toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9' ]/g,' ').split(/\s+/).filter(Boolean);
+function diff(a,b){const n=a.length,m=b.length,d=Array.from({length:n+1},()=>Array(m+1).fill(0));
+ for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)d[i][j]=a[i]===b[j]?d[i+1][j+1]+1:Math.max(d[i+1][j],d[i][j+1]);
+ const out=[];let i=0,j=0;while(i<n||j<m){if(i<n&&j<m&&a[i]===b[j]){out.push(['g',a[i]]);i++;j++}else if(j<m&&(i>=n||d[i][j+1]>=d[i+1][j])){out.push(['m',b[j]]);j++}else{out.push(['b',a[i]]);i++}}return out}
+function moveL(step){const p=lpool();if(!p.length)return;const k=lkey();
+ lpos[k]=$('lorder').value==='rand'&&step>0?Math.floor(Math.random()*p.length):((lpos[k]||0)+step+p.length)%p.length;store.set('lpos',lpos);showL()}
+$('lplay').onclick=()=>playItem(false);$('lslow').onclick=()=>playItem(true);
+$('lcheck').onclick=()=>{const it=litem();if(!it)return;const ans=norm(it.text),you=norm($('lin').value);if(!you.length){$('ldiff').textContent='Hãy gõ câu bạn nghe được trước nhé.';return}
+ const r=diff(you,ans),ok=r.filter(x=>x[0]==='g').length,pct=Math.round(ok/Math.max(ans.length,1)*100);
+ stats.listen++;if(pct===100)stats.listenOk++;save();markDay();
+ $('ldiff').innerHTML=`<b>${pct}% đúng.</b> ${pct===100?'Tuyệt vời!':'Đỏ gạch là từ bạn gõ sai hoặc thừa, đỏ đậm là từ bị thiếu.'}<br>`+r.map(x=>`<span class="${x[0]}">${esc(x[1])}</span>`).join(' ')+(it.tr?`<div class="ex" style="margin-top:8px">${esc(it.tr)}</div>`:'')};
+$('lshow').onclick=()=>{const it=litem();if(it)$('ldiff').innerHTML='<b>Đáp án:</b> '+esc(it.text)+(it.tr?`<div class="ex" style="margin-top:6px">${esc(it.tr)}</div>`:'')};
+$('lnext').onclick=()=>moveL(1);$('lprev').onclick=()=>moveL(-1);$('lset').onchange=showL;
+$('lin').onkeydown=e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();$('lcheck').click()}};
+/* import UI */
+const pending={phrase:null,listen:null};
+function bindImport(kind,ids){
+ const box=$(ids.text),out=$(ids.out),go=$(ids.go),setIn=$(ids.set);
+ const reset=()=>{pending[kind]=null;go.disabled=true;go.textContent='Nhập'};
+ box.oninput=reset;setIn.oninput=reset;
+ $(ids.file).onchange=async e=>{const f=e.target.files[0];if(!f)return;try{box.value=await f.text();if(!setIn.value)setIn.value=f.name.replace(/\.[^.]+$/,'');reset();$(ids.prev).click()}catch(err){out.innerHTML='<p class="errs">Không đọc được file.</p>'}e.target.value=''};
+ $(ids.copy).onclick=()=>copyText(kind==='phrase'?P_SAMPLE:L_SAMPLE,out,box);
+ $(ids.fill).onclick=()=>{box.value=kind==='phrase'?P_SAMPLE:L_SAMPLE;reset();out.innerHTML='<p class="warn">Đã dán mẫu. Bấm "Xem trước" để thử.</p>'};
+ $(ids.prev).onclick=()=>{const mode=document.querySelector(`input[name=${ids.mode}]:checked`).value,setName=setIn.value.trim()||'Bộ của tôi';
+  const R=toRecords(box.value,kind);if(R.fatal){out.innerHTML=`<p class="errs">${esc(R.fatal)}</p>`;reset();return}
+  if(!R.recs.length){out.innerHTML='<p class="warn">Chưa có dữ liệu. Hãy dán bảng hoặc chọn file.</p>';reset();return}
+  const existing=mode==='replace'?[]:kind==='phrase'?cards.map(c=>c.p.toLowerCase()):listen.map(x=>(x.text+'|'+x.audio+'|'+x.s).toLowerCase());
+  const V=validate(R.recs,kind,existing,setName,R.base,R.unit);pending[kind]={items:V.ok,mode};
+  const cols=kind==='phrase'?[['p','Cụm từ'],['m','Nghĩa'],['e','Ví dụ'],['t','Bộ'],['src','Nguồn']]:[['text','Câu'],['tr','Nghĩa'],['audio','Âm thanh'],['s','Từ'],['e','Đến'],['t','Bộ']];
+  const missing=kind==='listen'?[...new Set(V.ok.filter(x=>x.audio&&!/^https?:/i.test(x.audio)&&!audioNames.includes(x.audio)).map(x=>x.audio))]:[];
+  const show=v=>v==null?'':typeof v==='number'?fmtT(v):v;
+  out.innerHTML=`<div class="sum"><span class="chip ok">${V.ok.length} dòng hợp lệ</span>${V.errs.length?`<span class="chip bad">${V.errs.length} dòng lỗi (bỏ qua)</span>`:''}${V.dups?`<span class="chip">${V.dups} dòng trùng (bỏ qua)</span>`:''}<span class="chip">Nhận dạng: ${esc(R.how)}</span></div>`+
+   (V.ok.length?`<div class="tbl"><table><thead><tr>${cols.map(c=>`<th>${c[1]}</th>`).join('')}</tr></thead><tbody>${V.ok.slice(0,8).map(r=>`<tr>${cols.map(c=>`<td title="${esc(show(r[c[0]]))}">${esc(show(r[c[0]]))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>${V.ok.length>8?`<p class="warn">… và ${V.ok.length-8} dòng nữa.</p>`:''}`:'')+
+   (missing.length?`<p class="warn">⚠ Chưa tải lên tệp: ${missing.map(esc).join(', ')}. Bạn vẫn nhập được, rồi tải các tệp này lên sau.</p>`:'')+
+   (V.errs.length?`<ul class="errs">${V.errs.slice(0,30).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'')+
+   (mode==='replace'&&V.ok.length?`<p class="warn" style="color:var(--red)">Chế độ thay toàn bộ: dữ liệu ${kind==='phrase'?'cụm từ':'bài nghe'} hiện có và tiến độ ôn của nó sẽ bị xóa.</p>`:'');
+  go.disabled=!V.ok.length;go.textContent=V.ok.length?`Nhập ${V.ok.length} ${kind==='phrase'?'cụm từ':'câu'}`:'Nhập'};
+ go.onclick=()=>{const P=pending[kind];if(!P||!P.items.length)return;
+  const backup=kind==='phrase'?cards:listen;
+  const items=P.items.map(x=>kind==='phrase'?{id:uid(),...x,box:1,due:0}:{id:uid(),...x});
+  if(kind==='phrase')cards=P.mode==='replace'?items:cards.concat(items);else listen=P.mode==='replace'?items:listen.concat(items);
+  if(!save()){if(kind==='phrase')cards=backup;else listen=backup;save();out.innerHTML='<p class="errs">Bộ nhớ trình duyệt đã đầy, chưa nhập được. Hãy xóa bớt bộ cũ hoặc chia file nhỏ hơn.</p>';return}
+  const n=items.length,setsTouched=[...new Set(items.map(x=>x.t))];
+  out.innerHTML=`<p class="chip ok" style="display:inline-block">Đã nhập ${n} ${kind==='phrase'?'cụm từ':'câu'} vào: ${setsTouched.map(esc).join(', ')}</p> <a href="#${kind==='phrase'?'cum-tu':'luyen-nghe'}" style="color:var(--acc);font-weight:700;margin-left:6px">Học ngay →</a>`;
+  box.value='';reset();refreshAll();
+  const sel=kind==='phrase'?$('topic'):$('lset');if(setsTouched.length===1){sel.value=setsTouched[0];kind==='phrase'?nextCard():showL()}}}
+bindImport('phrase',{text:'pin',out:'pout',go:'pgo',set:'pset',file:'pfile',copy:'pcopy',fill:'pfill',prev:'pprev',mode:'pmode'});
+bindImport('listen',{text:'lpin',out:'lout',go:'lgo',set:'lsetname',file:'lfile',copy:'lcopy',fill:'lfill',prev:'lpv',mode:'lmode'});
+/* manage sets */
+function drawSets(){
+ const li=(list,kind)=>{const s=setsOf(list);return s.length?s.map(([t,n])=>`<li><span>${esc(t)} <span class="warn">· ${n}${kind==='p'?' cụm từ':' câu'}</span></span><button data-del="${kind}" data-set="${esc(t)}">Xóa</button></li>`).join(''):'<li class="warn">Chưa có bộ nào.</li>'};
+ $('psets').innerHTML=li(cards,'p');$('lsets').innerHTML=li(listen,'l')}
+document.querySelector('#nhap-du-lieu').addEventListener('click',e=>{const b=e.target.closest('button[data-del]');if(!b)return;
+ if(b.dataset.armed!=='1'){b.dataset.armed='1';b.textContent='Bấm lần nữa để xóa';b.classList.add('red');return}
+ const t=b.dataset.set;if(b.dataset.del==='p')cards=cards.filter(c=>c.t!==t);else listen=listen.filter(x=>x.t!==t);save();refreshAll()});
+$('bcopy').onclick=()=>{const data=JSON.stringify({v:1,phrases:cards,listening:listen});copyText(data,$('bmsg'),$('bbox'));$('bmsg').textContent+=' Bản sao lưu gồm cụm từ, tiến độ ôn và bài nghe (không gồm tệp âm thanh).'};
+$('brest').onclick=()=>{const bx=$('bbox');if(bx.style.display!=='block'||!bx.value.trim()){bx.style.display='block';bx.value='';bx.placeholder='Dán bản sao lưu vào đây rồi bấm "Khôi phục" lần nữa';bx.focus();$('bmsg').textContent='';return}
+ try{const j=JSON.parse(bx.value);if(!Array.isArray(j.phrases)||!Array.isArray(j.listening))throw 0;cards=j.phrases.filter(c=>c&&c.p&&c.m).map(c=>({id:c.id||uid(),t:c.t||'Bộ của tôi',p:c.p,m:c.m,e:c.e||'',src:c.src||'',box:c.box||1,due:c.due||0}));
+  listen=j.listening.filter(x=>x&&x.text).map(x=>({id:x.id||uid(),text:x.text,tr:x.tr||'',audio:x.audio||'',s:x.s??null,e:x.e??null,t:x.t||'Bộ của tôi',src:x.src||''}));
+  save();refreshAll();bx.value='';bx.style.display='none';$('bmsg').textContent=`Đã khôi phục ${cards.length} cụm từ và ${listen.length} câu nghe.`}catch(e){$('bmsg').textContent='Bản sao lưu không hợp lệ.'}};
+/* IELTS speaking */
+let sq='',sT=null;const fmt=s=>Math.floor(s/60)+':'+String(s%60).padStart(2,'0');
+function newSQ(){clearInterval(sT);sT=null;$('sstart').textContent='Bắt đầu';const part=$('spart').value,l=SPK[part];sq=l[Math.floor(Math.random()*l.length)];
+ const [q,pts]=sq.split('|');$('sq').innerHTML=esc(q)+(pts?'<ul><li>You should say: '+pts.split(';').map(esc).join('</li><li>')+'</li></ul>':'');
+ $('stime').textContent=part==='1'?'0:30':'1:00';$('sphase').textContent='Bấm "Bắt đầu" để tính giờ.'}
+function run(sec,label,then){let s=sec;$('stime').textContent=fmt(s);$('sphase').textContent=label;sT=setInterval(()=>{s--;$('stime').textContent=fmt(Math.max(s,0));if(s<=0){clearInterval(sT);sT=null;then()}},1000)}
+$('sstart').onclick=()=>{if(sT){clearInterval(sT);sT=null;$('sstart').textContent='Bắt đầu';$('sphase').textContent='Đã dừng.';return}
+ $('sstart').textContent='Dừng';stats.speak++;save();markDay();const part=$('spart').value,done=()=>{$('sphase').textContent='Hết giờ! Thử lại hoặc chọn câu khác.';$('sstart').textContent='Bắt đầu'};
+ if(part==='2')run(60,'Chuẩn bị: ghi chú ý chính (1 phút)',()=>run(120,'Nói liên tục (tối đa 2 phút)',done));else run(part==='1'?30:60,part==='1'?'Trả lời 2–3 câu (30 giây)':'Trả lời và giải thích (1 phút)',done)};
+$('snew').onclick=newSQ;$('spart').onchange=newSQ;$('ssay').onclick=()=>say(sq.split('|')[0]);
+let wi=store.get('wi',0),wT=null;
+function showW(){$('wq').textContent=WRT[wi%WRT.length];$('wtext').value=store.get('draft'+wi%WRT.length,'');count()}
+function count(){const n=($('wtext').value.match(/[A-Za-z0-9'’-]+/g)||[]).length;$('wc').textContent=n;$('wc').style.color=n>=250?'var(--ok)':''}
+$('wtext').oninput=()=>{count();store.set('draft'+wi%WRT.length,$('wtext').value)};
+$('wnew').onclick=()=>{wi++;store.set('wi',wi);showW()};
+$('wstart').onclick=()=>{if(wT){clearInterval(wT);wT=null;$('wstart').textContent='Bắt đầu 40 phút';return}
+ let s=2400;$('wstart').textContent='Dừng';markDay();wT=setInterval(()=>{s--;$('wtime').textContent=fmt(s);if(s<=0){clearInterval(wT);wT=null;$('wtime').textContent='Hết giờ';$('wstart').textContent='Bắt đầu 40 phút'}},1000)};
+$('bank').innerHTML=BANK.map(b=>`<li>${esc(b)}</li>`).join('');
+/* progress */
+function drawProg(){const t=cards.length||1;$('pbox').innerHTML=[1,2,3,4,5].map(b=>{const n=cards.filter(c=>c.box===b).length;return `<div class="stat"><span>Hộp ${b}${b===5?' (thuộc)':''}</span><div class="bar"><i style="width:${n/t*100}%"></i></div><span>${n}</span></div>`}).join('');
+ const row=(a,b)=>`<div class="stat"><span>${a}</span><span></span><span>${b}</span></div>`;
+ $('psum').innerHTML=row('Cụm từ',cards.length)+row('Câu nghe',listen.length)+row('Lượt ôn thẻ',stats.reviews)+row('Lượt chép chính tả',stats.listen)+row('Đúng 100%',stats.listenOk)+row('Ngày đã học',stats.days.length)}
+let armed=false;
+$('reset').onclick=()=>{if(!armed){armed=true;$('rmsg').textContent='Bấm lần nữa để xác nhận.';$('reset').classList.add('red');return}
+ armed=false;$('reset').classList.remove('red');cards.forEach(c=>{c.box=1;c.due=0});stats={reviews:0,listen:0,listenOk:0,speak:0,days:[]};save();nextCard();drawProg();showStreak();$('rmsg').textContent='Đã đặt lại tiến độ.'};
+function refreshAll(){fillSelect($('topic'),cards);fillSelect($('lset'),listen);nextCard();showL();drawSets();drawAudioList();drawProg()}
+/* theme: sáng = Bình minh, tối = Hoàng hôn */
+const SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+const MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+const isDark=()=>{const t=document.documentElement.dataset.theme;if(t)return t==='dark';try{return matchMedia('(prefers-color-scheme: dark)').matches}catch(e){return false}};
+function drawTheme(){const d=isDark();$('theme').innerHTML=(d?SUN:MOON)+(d?'Sáng':'Tối');$('theme').setAttribute('aria-label',d?'Chuyển sang giao diện sáng':'Chuyển sang giao diện tối')}
+const saved=store.get('theme',null);if(saved)document.documentElement.dataset.theme=saved;
+$('theme').onclick=()=>{const t=isDark()?'light':'dark';document.documentElement.dataset.theme=t;store.set('theme',t);drawTheme()};
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',drawTheme)}catch(e){}
+/* routing */
+const views=['cum-tu','luyen-nghe','nhap-du-lieu','ielts','tien-do'];
+function route(){const h=location.hash.slice(1),v=views.includes(h)?h:'cum-tu';
+ views.forEach(x=>$(x).classList.toggle('on',x===v));document.querySelectorAll('nav a').forEach(a=>a.toggleAttribute('aria-current',a.getAttribute('href')==='#'+v));if(v==='tien-do')drawProg();if(v==='nhap-du-lieu')drawSets()}
+addEventListener('hashchange',route);
+drawTheme();refreshAll();loadAudioList();newSQ();showW();showStreak();route();
+}
+</script>
+</body>
+</html>
